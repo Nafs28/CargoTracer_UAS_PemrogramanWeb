@@ -1,128 +1,112 @@
 # 🚢 CargoTrace — Global Shipment Visibility & Tracking Platform
 
-[![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
-[![PHP](https://img.shields.io/badge/PHP-8.2%2B-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net)
-[![PHPUnit Tests](https://img.shields.io/badge/PHPUnit%20Tests-21%20Passed-22c55e?style=for-the-badge&logo=checkmarx&logoColor=white)](#-automated-testing-suite)
-[![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](#)
-
-> **UAS Web Programming 2 — Portfolio-Grade Capstone Project**  
-> An enterprise-grade logistics visibility engine delivering deterministic delay calculations, append-only historical tracking milestones, interactive Leaflet.js GIS waypoints, and automated exception escalation lifecycles.
+An enterprise logistics visibility platform delivering deterministic delay calculations, append-only historical tracking milestones, interactive GIS maritime waypoints, and automated exception escalation workflows.
 
 ---
 
 ## 📑 Table of Contents
-1. [Executive Summary & Architecture](#-executive-summary--architecture)
-2. [Domain Problem & Proposed Solution](#-domain-problem--proposed-solution)
-3. [User Roles & Authorization Matrix (RBAC)](#-user-roles--authorization-matrix-rbac)
-4. [Core Business Logic & Engineering Engines](#-core-business-logic--engineering-engines)
+1. [Project Overview & Problem Domain](#-project-overview--problem-domain)
+2. [User Roles & Authorization Matrix](#-user-roles--authorization-matrix)
+3. [Core Engineering Modules](#-core-engineering-modules)
    - [Shipment Lifecycle State Machine](#1-shipment-lifecycle-state-machine)
    - [Deterministic Delay Engine](#2-deterministic-delay-engine)
    - [Append-Only Historical Tracking](#3-append-only-historical-tracking)
    - [Exception Management Lifecycle](#4-exception-management-lifecycle)
-   - [Resilient External API Integrations](#5-resilient-external-api-integrations)
-5. [Database Schema & Entity Relationship](#-database-schema--entity-relationship)
-6. [RESTful API Specification & Contracts](#-restful-api-specification--contracts)
-7. [Automated Testing Suite (PHPUnit)](#-automated-testing-suite)
-8. [Local Installation & Setup Guide](#-local-installation--setup-guide)
-9. [Pre-Seeded Demo Accounts](#-pre-seeded-demo-accounts)
-10. [Code Ownership Defense Guide](#-code-ownership-defense-guide)
+   - [GIS Map & Weather Integration](#5-gis-map--weather-integration)
+   - [Operational Analytics & Audit Trail](#6-operational-analytics--audit-trail)
+4. [System Architecture: Service Layer](#-system-architecture-service-layer)
+5. [Data Model & Schema (ERD)](#-data-model--schema-erd)
+6. [RESTful API Endpoints](#-restful-api-endpoints)
+7. [Automated Verification Tests](#-automated-verification-tests)
+8. [Quickstart & Demo Credentials](#-quickstart--demo-credentials)
+9. [Code Ownership & Defense Guide](#-code-ownership--defense-guide)
 
 ---
 
-## 🎯 Executive Summary & Architecture
+## 🌐 Project Overview & Problem Domain
 
-CargoTrace rejects the "Fat Controller" antipattern and implements a clean **Service Layer Pattern**:
-
-```mermaid
-flowchart TD
-    Client["Client Viewport / SPA Frontend\n(Blade + Tailwind CSS + Vanilla JS)"]
-    Router["HTTP Routing & Middleware Gate\n(Sanctum Auth, RoleMiddleware, CSRF)"]
-    Controllers["HTTP Controllers\n(Request Validation & JSON Serialization)"]
-    Services["Service Layer (Business Rules Engine)\n(Shipment, Tracking, Eta, Exception, Audit)"]
-    Models["Eloquent ORM & Database\n(MySQL 8+ / SQLite)"]
-    ExternalAPIs["External Resilient Services\n(OpenStreetMap Nominatim & Open-Meteo Weather)"]
-
-    Client --> Router
-    Router --> Controllers
-    Controllers --> Services
-    Services --> Models
-    Services --> ExternalAPIs
-```
-
-### Architecture Components:
-* **`ShipmentService`**: Enforces strict lifecycle state machines, auto-generates format `CT-YYYYMMDD-XXXXX` tracking identifiers, and handles customer tenant isolation.
-* **`TrackingService`**: Append-only milestone recording with chronological integrity checks and coordinate-based waypoint synthesis.
-* **`EtaService`**: Mathematical delay calculations ($\Delta t = \text{ETA} - \text{Expected}$) mapping to LOW, MEDIUM, and HIGH severity categories.
-* **`ExceptionService`**: Manages incident escalation pipelines (`OPEN` &rarr; `INVESTIGATING` &rarr; `RESOLVED`).
-* **`GeocodingService` & `WeatherService`**: Fault-tolerant external HTTP clients with fallback mechanisms and 24-hour cache persistence.
-* **`AuditService`**: Forensic immutable audit logs recording actor, action, previous state, and new state.
-
----
-
-## 🌐 Domain Problem & Proposed Solution
+In global ocean and multimodal logistics, shipment data is traditionally siloed across independent carriers, port authorities, and freight forwarders. Customers lack visibility while cargo is in transit, delays are discovered only after delivery deadlines have passed, and operational exceptions are handled reactively.
 
 ```
 ┌─────────────────────────────────┐        ┌──────────────────────────────────┐
-│       EXISTING PROBLEMS         │   ──►  │       CARGOTRACE SOLUTION        │
+│        EXISTING PROBLEMS        │   ──►  │        CARGOTRACE SOLUTION       │
 ├─────────────────────────────────┤        ├──────────────────────────────────┤
-│ • Fragmented logistics data     │        │ • Centralized Hub (Carrier/Port) │
-│ • Blind customers during transit│        │ • Live GIS Timeline & Route Map  │
-│ • Hidden, unforecasted delays   │        │ • Deterministic Delay Engine     │
-│ • Ad-hoc incident handling      │        │ • Exception Lifecycle Workflows  │
+│ • Information scattered         │        │ • Centralized logistics hub      │
+│ • Blind customers in transit    │        │ • Live GIS map & waypoint trails │
+│ • Latent, unflagged delays      │        │ • Deterministic Delay Engine     │
+│ • Ad-hoc incident handling      │        │ • 3-stage Exception Lifecycle    │
 └─────────────────────────────────┘        └──────────────────────────────────┘
 ```
 
+**CargoTrace solves this by providing:**
+- Full end-to-end operational visibility with GPS-coordinate timeline tracking.
+- Automatic delay detection based on contractual expected arrival versus estimated arrival.
+- Structured escalation handling for customs holds, weather delays, and port bottlenecks.
+- Role-based security ensuring customers only see their own cargo while logistics operators manage fleet operations.
+
 ---
 
-## 👥 User Roles & Authorization Matrix (RBAC)
+## 👥 User Roles & Authorization Matrix
 
-| Feature / Action | Admin | Logistics Operator | Customer |
+A Role-Based Access Control (RBAC) matrix enforces operational boundaries and tenant isolation:
+
+```mermaid
+flowchart LR
+    A["Incoming Request"] --> B{"Authentication & Role Check"}
+    B -->|Administrator| C["Full Access: Master Data, Carriers, Hubs, Audit Trail, All Cargo"]
+    B -->|Logistics Operator| D["Operational Access: Transitions, Waypoints, Incidents"]
+    B -->|Customer| E["Tenant Scoped: Own Shipments Only, ETA, Map, Timeline"]
+    B -->|Unauthorized| F["403 Forbidden / JSON Error"]
+```
+
+| Capabilities / Scope | Administrator | Logistics Operator | Customer |
 | :--- | :---: | :---: | :---: |
-| View Analytics Dashboard | ✅ Full | ✅ Full | ✅ Scoped (Own Shipments) |
-| List & Search Shipments | ✅ All Shipments | ✅ All Shipments | ✅ Tenant Isolated (Only Own) |
-| Create New Shipment | ✅ | ✅ | ✅ (Own Tenant) |
-| Transition Status State | ✅ | ✅ | ❌ Forbidden (403) |
+| View Operational Dashboard | ✅ Full Fleet | ✅ Full Fleet | ✅ Scoped (Own Shipments Only) |
+| Search & List Shipments | ✅ All Shipments | ✅ All Shipments | ✅ Scoped (Tenant Isolated) |
+| Create New Shipment Order | ✅ | ✅ | ✅ (Own Tenant Account) |
+| Transition Lifecycle Status | ✅ | ✅ | ❌ Forbidden (403) |
 | Soft-Delete Shipment | ✅ | ❌ Forbidden (403) | ❌ Forbidden (403) |
 | Record Tracking Milestones | ✅ | ✅ | ❌ Forbidden (403) |
-| Report & Resolve Exceptions | ✅ | ✅ | ❌ Forbidden (Read Only) |
-| Manage Carriers & Locations | ✅ | ❌ Forbidden (403) | ❌ Forbidden (403) |
-| View System Audit Trail | ✅ | ❌ Forbidden (403) | ❌ Forbidden (403) |
+| Report & Resolve Exceptions | ✅ | ✅ | ❌ Forbidden (View Only) |
+| Manage Carrier Fleet | ✅ | ❌ Forbidden (403) | ❌ Forbidden (403) |
+| Manage Ports & Hub Locations | ✅ | ❌ Forbidden (403) | ❌ Forbidden (403) |
+| Inspect System Audit Trail | ✅ | ❌ Forbidden (403) | ❌ Forbidden (403) |
 
 ---
 
-## ⚙️ Core Business Logic & Engineering Engines
+## ⚙️ Core Engineering Modules
 
 ### 1. Shipment Lifecycle State Machine
-Status transitions are strictly governed in `ShipmentService`:
+Status transitions follow an enforced sequential state machine:
 
 ```mermaid
 stateDiagram-v2
-    [*] --> CREATED: Order Placed
-    CREATED --> BOOKED: Carrier & Route Allocated
+    [*] --> CREATED: Order Generated
+    CREATED --> BOOKED: Fleet & Carrier Confirmed
     BOOKED --> PICKED_UP: Cargo Handed to Carrier
     PICKED_UP --> IN_TRANSIT: Vessel Underway
     IN_TRANSIT --> DELIVERED: Final Port Discharge
-    DELIVERED --> [*]: Terminal Locked State
-    
-    CREATED --> CANCELLED: Order Cancelled
-    BOOKED --> CANCELLED: Order Cancelled
-    PICKED_UP --> CANCELLED: Formal Abort
-    IN_TRANSIT --> CANCELLED: Emergency Abort
-    CANCELLED --> [*]: Terminal Locked State
+    DELIVERED --> [*]: Terminal State (Permanently Locked)
+
+    CREATED --> CANCELLED: Order Aborted
+    BOOKED --> CANCELLED: Carrier Cancelled
+    PICKED_UP --> CANCELLED: Emergency Recall
+    IN_TRANSIT --> CANCELLED: Formal Cancellation
+    CANCELLED --> [*]: Terminal State (Permanently Locked)
 ```
 
-* Any attempt to skip sequence steps (e.g., `CREATED` &rarr; `DELIVERED`) throws `422 Unprocessable Entity`.
-* `DELIVERED` and `CANCELLED` represent **Terminal States** that are permanently locked against modifications.
+- **Validation:** Illegal state jumps (e.g., `CREATED` &rarr; `DELIVERED`) are rejected with `422 Unprocessable Entity`.
+- **Terminal States:** Once marked `DELIVERED` or `CANCELLED`, records become immutable.
 
 ---
 
 ### 2. Deterministic Delay Engine
-Calculated automatically inside `EtaService`:
+Calculates shipment schedule variance dynamically:
 
 $$\Delta t = \text{Estimated Arrival (ETA)} - \text{Expected Arrival}$$
 
-- If $\Delta t \le 0 \implies \text{is\_delayed} = \text{false}, \text{severity} = \text{null}$
-- If $\Delta t > 0 \implies \text{is\_delayed} = \text{true}$ with severity breakdown:
+- If $\Delta t \le 0 \implies \text{is\_delayed} = \text{false}, \text{delay\_severity} = \text{null}$
+- If $\Delta t > 0 \implies \text{is\_delayed} = \text{true}$ with severity categorization:
   - **LOW:** $\Delta t \in (0, 6\text{ hours}]$
   - **MEDIUM:** $\Delta t \in (6, 24\text{ hours}]$
   - **HIGH:** $\Delta t > 24\text{ hours}$
@@ -130,34 +114,74 @@ $$\Delta t = \text{Estimated Arrival (ETA)} - \text{Expected Arrival}$$
 ---
 
 ### 3. Append-Only Historical Tracking
-Records in `tracking_events` are append-only. When a new waypoint is submitted:
-1. Chronological integrity is strictly enforced ($t_{\text{new}} \ge t_{\text{latest}}$).
-2. If `status_type` matches a lifecycle step, `ShipmentService` automatically synchronizes `current_status`.
-3. Coordinates are linked dynamically to provide route waypoints for the Leaflet.js interactive map.
+- **Immutability:** Milestone records in `tracking_events` cannot overwrite previous entries.
+- **Chronological Rule:** Any new milestone must satisfy $t_{\text{new}} \ge t_{\text{latest}}$.
+- **Dynamic Current Location:** The platform resolves the vessel's current position from the latest valid coordinate entry.
 
 ---
 
 ### 4. Exception Management Lifecycle
-Incidents follow an auditable three-step operational workflow:
+Operational disruptions progress through a formalized three-stage resolution pipeline:
 
 $$\text{OPEN} \longrightarrow \text{INVESTIGATING} \longrightarrow \text{RESOLVED}$$
 
-- Valid Types: `CUSTOMS_HOLD`, `WEATHER_DELAY`, `PORT_CONGESTION`, `DAMAGED`, `MISROUTED`, `DOCUMENTATION_ISSUE`.
-- Automatically emits a customer notification and sets `resolved_at` upon operational sign-off.
+- **Incident Types:** `CUSTOMS_HOLD`, `WEATHER_DELAY`, `PORT_CONGESTION`, `DAMAGED`, `MISROUTED`, `DOCUMENTATION_ISSUE`.
+- **Resolution:** Tracks root-cause investigation notes, timestamps resolution ($t_{\text{resolved}}$), and automatically dispatches customer notifications.
 
 ---
 
-### 5. Resilient External API Integrations
-- **Nominatim Geocoding API (`GeocodingService`)**: Translates city/port names to latitude/longitude with 24-hour cache layer and embedded offline fallback coordinates for major world ports.
-- **Open-Meteo Weather API (`WeatherService`)**: Real-time maritime condition fetch with 30-minute caching and timeout retries.
+### 5. GIS Map & Weather Integration
+- **Interactive Route Mapping:** Visualizes origin port, maritime transit waypoints, and destination hub via Leaflet.js and OpenStreetMap.
+- **Resilient Geocoding:** Converts address queries to coordinate pairs with a 24-hour cache layer and embedded offline fallback coordinates for major world ports.
+- **Real-Time Weather Telemetry:** Fetches live marine weather (temperature, wind velocity, precipitation) at active coordinate points with a 30-minute cache layer.
 
 ---
 
-## 🗄️ Database Schema & Entity Relationship
+### 6. Operational Analytics & Audit Trail
+- **Live Metrics Dashboard:** Aggregates real-time order counts, active in-transit vessels, on-time delivery ratios, and open incidents.
+- **Visual Analytics:** Interactive status breakdown charts, carrier volume distributions, and 14-day SLA delivery cadence trends.
+- **Forensic Audit Logging:** Records every critical mutation (actor, action, auditable model, IP address, previous state JSON, and new state JSON).
+
+---
+
+## 🏛️ System Architecture: Service Layer
+
+Business logic is organized into dedicated Services to ensure modularity and comprehensive testability:
+
+```
+┌─────────────────────────────────┐
+│     HTTP Routing & Gateways     │ (Sanctum Auth & Role Middleware)
+└────────────────┬────────────────┘
+                 ▼
+┌─────────────────────────────────┐
+│        API Controllers          │ (Request Validation & HTTP Status Serialization)
+└────────────────┬────────────────┘
+                 ▼
+┌─────────────────────────────────┐
+│         Service Layer           │
+├─────────────────────────────────┤
+│ • ShipmentService               │ (Lifecycle transitions, tracking numbers)
+│ • TrackingService               │ (Chronological events & coordinate tracking)
+│ • EtaService                    │ (Delay delta calculations & severity matrix)
+│ • ExceptionService              │ (Incident management pipeline)
+│ • GeocodingService              │ (Resilient geocoding & fallbacks)
+│ • WeatherService                │ (Live marine meteorological telemetry)
+│ • DashboardService              │ (Aggregated analytical metrics & chart data)
+│ • AuditService                  │ (Forensic change tracking)
+└────────────────┬────────────────┘
+                 ▼
+┌─────────────────────────────────┐
+│      Database & Persistence     │ (Relational models & scopes)
+└─────────────────────────────────┘
+```
+
+---
+
+## 🗄️ Data Model & Schema (ERD)
 
 ```mermaid
 erDiagram
-    users ||--o{ shipments : "places/owns"
+    users ||--o{ shipments : "owns"
     users ||--o{ tracking_events : "records"
     users ||--o{ audit_logs : "triggers"
     carriers ||--o{ shipments : "transports"
@@ -166,59 +190,92 @@ erDiagram
     shipments ||--o{ shipment_items : "contains"
     shipments ||--o{ tracking_events : "has_history"
     shipments ||--o{ shipment_exceptions : "encounters"
-    shipments ||--o{ notifications : "generates"
+    shipments ||--o{ notifications : "receives"
+
+    users {
+        bigint id PK
+        string name
+        string email UK
+        string role "admin, operator, customer"
+    }
+    shipments {
+        bigint id PK
+        string shipment_number UK
+        bigint customer_id FK
+        bigint carrier_id FK
+        bigint origin_id FK
+        bigint destination_id FK
+        string current_status
+        datetime expected_departure
+        datetime expected_arrival
+        datetime estimated_arrival
+        boolean is_delayed
+        decimal delay_hours
+        string delay_severity
+    }
+    tracking_events {
+        bigint id PK
+        bigint shipment_id FK
+        bigint location_id FK
+        string status_type
+        decimal latitude
+        decimal longitude
+        datetime event_time
+        string description
+    }
+    shipment_exceptions {
+        bigint id PK
+        bigint shipment_id FK
+        string exception_type
+        string severity "LOW, MEDIUM, HIGH"
+        string status "OPEN, INVESTIGATING, RESOLVED"
+        text notes
+        datetime resolved_at
+    }
 ```
 
 ---
 
-## 🔌 RESTful API Specification & Contracts
+## 🔌 RESTful API Endpoints
 
-All endpoints return uniform, structured JSON: `{ "success": true, "data": ..., "message": ... }`.
+All responses follow a consistent envelope contract: `{ "success": boolean, "data": ..., "message": string }`.
 
-| Method | Endpoint | Description | Access Role |
+| Method | Endpoint | Description | Access Scope |
 | :--- | :--- | :--- | :--- |
-| `POST` | `/api/register` | Customer self-registration | Public |
-| `POST` | `/api/login` | Acquire Bearer Token (Sanctum) | Public |
-| `POST` | `/api/logout` | Invalidate current token | Authenticated |
-| `GET` | `/api/user` | Current authenticated user profile | Authenticated |
-| `GET` | `/api/dashboard` | KPI metrics & recent activity | Authenticated (Scoped) |
-| `GET` | `/api/dashboard/shipments-by-status` | Status breakdown for Doughnut chart | Authenticated |
-| `GET` | `/api/dashboard/shipments-by-carrier` | Volume by carrier for Bar chart | Authenticated |
-| `GET` | `/api/dashboard/delay-trend` | 14-day delay vs on-time line chart | Authenticated |
-| `GET` | `/api/shipments` | Paginated shipments directory (filter & search) | Authenticated (Scoped) |
+| `POST` | `/api/register` | Customer account registration | Public |
+| `POST` | `/api/login` | Obtain Bearer authentication token | Public |
+| `POST` | `/api/logout` | Revoke active token | Authenticated |
+| `GET` | `/api/user` | Current authenticated profile | Authenticated |
+| `GET` | `/api/dashboard` | Aggregated KPI operational summary | Authenticated (Scoped) |
+| `GET` | `/api/dashboard/shipments-by-status` | Status distribution for chart | Authenticated |
+| `GET` | `/api/dashboard/shipments-by-carrier`| Carrier volume share for chart | Authenticated |
+| `GET` | `/api/dashboard/delay-trend` | 14-day SLA cadence data for chart | Authenticated |
+| `GET` | `/api/shipments` | List shipments (search, filter, pagination) | Authenticated (Scoped) |
 | `POST` | `/api/shipments` | Create new shipment order | Admin, Operator, Customer |
-| `GET` | `/api/shipments/{id}` | Detailed shipment record with relations | Scoped Tenant / Ops |
-| `PATCH` | `/api/shipments/{id}/status` | Transition lifecycle state | Admin, Operator |
-| `DELETE` | `/api/shipments/{id}` | Soft-delete shipment | Admin |
-| `GET` | `/api/shipments/{id}/map` | Waypoint coordinates for Leaflet.js | Scoped Tenant / Ops |
-| `GET` | `/api/shipments/{id}/tracking`| Historical timeline milestones | Scoped Tenant / Ops |
-| `POST` | `/api/shipments/{id}/tracking`| Record tracking waypoint milestone | Admin, Operator |
-| `GET` | `/api/exceptions` | List open incidents across system | Admin, Operator |
-| `POST` | `/api/shipments/{id}/exceptions` | Report operational incident | Admin, Operator |
-| `PATCH` | `/api/exceptions/{id}` | Update or resolve exception | Admin, Operator |
-| `GET/POST` | `/api/carriers` | Manage carrier fleet | Admin (Read: All) |
-| `GET/POST` | `/api/locations` | Manage hub/port locations | Admin (Read: All) |
-| `GET` | `/api/geocode` | Resilient geocoding query | Authenticated |
-| `GET` | `/api/weather` | Resilient coordinates weather query | Authenticated |
-| `GET` | `/api/audit-logs` | Forensic system audit trail | Admin |
+| `GET` | `/api/shipments/{id}` | Detailed shipment record & waypoints | Scoped Tenant / Ops |
+| `PATCH` | `/api/shipments/{id}/status` | Execute lifecycle status transition | Admin, Operator |
+| `DELETE` | `/api/shipments/{id}` | Soft-delete shipment record | Admin |
+| `GET` | `/api/shipments/{id}/map` | GeoJSON coordinates for route visualization | Scoped Tenant / Ops |
+| `GET` | `/api/shipments/{id}/tracking`| Chronological timeline milestones | Scoped Tenant / Ops |
+| `POST` | `/api/shipments/{id}/tracking`| Append new tracking milestone | Admin, Operator |
+| `GET` | `/api/exceptions` | Active operational incidents | Admin, Operator |
+| `POST` | `/api/shipments/{id}/exceptions` | Flag new operational incident | Admin, Operator |
+| `PATCH` | `/api/exceptions/{id}` | Update investigation or resolve incident | Admin, Operator |
+| `GET/POST`| `/api/carriers` | Manage carrier fleet records | Admin (Read: All) |
+| `GET/POST`| `/api/locations` | Manage hub & port master records | Admin (Read: All) |
+| `GET` | `/api/geocode` | Resilient geocoding lookup | Authenticated |
+| `GET` | `/api/weather` | Live marine weather telemetry | Authenticated |
+| `GET` | `/api/audit-logs` | Forensic change log viewer | Admin |
 
-> A ready-to-import Postman Collection v2.1 is available at [`cargotrace_postman_collection.json`](file:///d:/Antigravity/UAS%20WEB/cargotrace/cargotrace_postman_collection.json).
+> A Postman Collection v2.1 is available at [`cargotrace_postman_collection.json`](file:///d:/Antigravity/UAS%20WEB/cargotrace/cargotrace_postman_collection.json).
 
 ---
 
-## 🧪 Automated Testing Suite
+## 🧪 Automated Verification Tests
 
-CargoTrace includes a comprehensive automated test suite built with **PHPUnit**:
+The platform is covered by an automated test suite verifying security, data isolation, lifecycle rules, and mathematical calculations:
 
-```bash
-php artisan test
 ```
-
-### Test Coverage Results (100% Green):
-```
-PASS  Tests\Unit\ExampleTest
-✓ that true is true
-
 PASS  Tests\Feature\AuthTest
 ✓ user can register successfully
 ✓ registration fails with invalid email or short password
@@ -247,70 +304,46 @@ PASS  Tests\Feature\StatusTransitionTest
 ✓ cancelled is terminal state
 
 Tests:    21 passed (71 assertions)
-Duration: 3.02s
 ```
 
 ---
 
-## 💻 Local Installation & Setup Guide
+## 🚀 Quickstart & Demo Credentials
 
-### Prerequisites
-* PHP 8.2+ with `pdo_sqlite`, `pdo_mysql`, `zip` extensions enabled.
-* Composer 2.x
-* MySQL 8.x (Optional — SQLite is pre-configured for instant zero-config startup)
-
-### 1. Clone & Enter Repository
+### Setup Commands
 ```bash
-git clone <repository_url> cargotrace
-cd cargotrace
-```
-
-### 2. Configure Environment
-```bash
-cp .env.example .env
-php artisan key:generate
-```
-
-### 3. Migrate & Seed Database
-```bash
+# 1. Initialize environment & database
 php artisan migrate:fresh --seed
-```
-*Creates all 13 migration tables and populates with realistic worldwide shipping data.*
 
-### 4. Run Automated Tests
-```bash
+# 2. Run automated test suite
 php artisan test
-```
 
-### 5. Start Development Server
-```bash
+# 3. Start local development server
 php artisan serve
 ```
-Open **[http://127.0.0.1:8000](http://127.0.0.1:8000)** in your browser!
 
----
+Access the interface at **[http://127.0.0.1:8000/app](http://127.0.0.1:8000/app)**.
 
-## 🔑 Pre-Seeded Demo Accounts
+### Pre-Seeded Accounts
+All accounts share the password: `password`
 
-All pre-seeded demo accounts share the password: `password`
-
-| Role | Email Address | Access Scope |
+| Role | Email Address | Description |
 | :--- | :--- | :--- |
-| **Administrator** | `admin@cargotrace.com` | Full administrative access, carriers, hubs, audit logs, all shipments |
-| **Logistics Operator** | `operator@cargotrace.com` | Operational control: status transitions, waypoints, exception resolutions |
-| **Customer Tenant** | `customer@cargotrace.com` | Isolated self-tracking: PT Global Logistik Nusantara shipments only |
+| **Administrator** | `admin@cargotrace.com` | Full administrative visibility across all carriers, locations, and audit trails |
+| **Logistics Operator** | `operator@cargotrace.com` | Operational control: milestone logging, state transitions, incident resolution |
+| **Customer** | `customer@cargotrace.com` | Tenant isolated: restricted strictly to PT Global Logistik Nusantara shipments |
 
 ---
 
-## 🎓 Code Ownership Defense Guide
+## 🎓 Code Ownership & Defense Guide
 
-Prepared for live coding interviews & defense questions:
+Key talking points for live interview verification:
 
-1. **Why Service Layer Pattern instead of Fat Controller?**  
-   *Logistics workflows involve cross-cutting concerns (state validation, automatic delay recalculations, audit logging, and customer notifications). Keeping them in Services makes them testable in isolation and prevents controller bloat.*
-2. **How does Tenant Isolation work?**  
-   *In `ShipmentService::getShipmentsForUser()`, queries check `$user->isCustomer()`. When true, an Eloquent scope `$query->where('customer_id', $user->id)` is automatically appended. Show `ShipmentCrudTest::test_customer_isolation_customer_only_sees_own_shipments()` as proof.*
-3. **How does the Delay Engine calculate severity?**  
-   *Point to `EtaService::calculateDelay()`. It compares `$expectedArrival` with `$referenceTime` ($t_{\text{est}}$), converts seconds to hours, and applies deterministic thresholds ($\le 6\text{h} \implies \text{LOW}$, $\le 24\text{h} \implies \text{MEDIUM}$, $> 24\text{h} \implies \text{HIGH}$).*
-4. **How are state transitions protected from race conditions and invalid jumps?**  
-   *Point to `ShipmentService::transitionStatus()` and `ShipmentService::VALID_TRANSITIONS`. Status transitions are wrapped in atomic `DB::transaction()` and reject terminal status tampering.*
+1. **Service Layer Separation:**  
+   Cross-cutting concerns (state validation, delay recalculation, audit logging, customer notifications) reside in `app/Services/` rather than controllers, enabling isolated unit testing.
+2. **Customer Tenant Isolation:**  
+   `ShipmentService::getShipmentsForUser()` checks if `$user->isCustomer()`. When true, an Eloquent scope `$query->where('customer_id', $user->id)` is appended to prevent data leaks across organizations.
+3. **Delay Calculation Determinism:**  
+   `EtaService::calculateDelay()` takes the difference between expected and estimated arrival in hours. When positive, it classifies the incident into `LOW` ($\le 6\text{h}$), `MEDIUM` ($\le 24\text{h}$), or `HIGH` ($> 24\text{h}$).
+4. **State Transition Concurrency & Terminal States:**  
+   `ShipmentService::transitionStatus()` uses atomic database transactions to guarantee integrity, and rejects changes to shipments in `DELIVERED` or `CANCELLED` states.
