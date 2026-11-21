@@ -120,7 +120,7 @@
                     </div>
                     <p class="text-sm text-slate-300 font-medium mb-1">System Administrator</p>
                     <p class="text-xs font-mono text-cyan-400 mb-4 select-all">admin@cargotrace.com</p>
-                    <a href="/app" class="block w-full py-2 text-center text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-white transition">
+                    <a href="/app?email=admin@cargotrace.com" class="block w-full py-2 text-center text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-white transition">
                         Masuk sebagai Admin
                     </a>
                 </div>
@@ -132,7 +132,7 @@
                     </div>
                     <p class="text-sm text-slate-300 font-medium mb-1">Operations Officer</p>
                     <p class="text-xs font-mono text-cyan-400 mb-4 select-all">operator@cargotrace.com</p>
-                    <a href="/app" class="block w-full py-2 text-center text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-white transition">
+                    <a href="/app?email=operator@cargotrace.com" class="block w-full py-2 text-center text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-white transition">
                         Masuk sebagai Operator
                     </a>
                 </div>
@@ -144,7 +144,7 @@
                     </div>
                     <p class="text-sm text-slate-300 font-medium mb-1">PT Global Logistik Nusantara</p>
                     <p class="text-xs font-mono text-cyan-400 mb-4 select-all">customer@cargotrace.com</p>
-                    <a href="/app" class="block w-full py-2 text-center text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-white transition">
+                    <a href="/app?email=customer@cargotrace.com" class="block w-full py-2 text-center text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-white transition">
                         Masuk sebagai Pelanggan
                     </a>
                 </div>

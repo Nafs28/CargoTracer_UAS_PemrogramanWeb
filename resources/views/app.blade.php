@@ -545,6 +545,17 @@
                         </div>
                         <div id="lifecycle-action-buttons" class="flex flex-wrap gap-2"></div>
                     </div>
+
+                    <!-- Panel Khusus Administrator (Hapus Kargo / Soft Delete) -->
+                    <div id="admin-shipment-danger-zone" class="p-4 bg-rose-950/20 rounded-2xl border border-rose-900/40 flex items-center justify-between hidden">
+                        <div>
+                            <span class="text-xs font-bold text-rose-400 block">Tindakan Administrator</span>
+                            <span class="text-[10px] text-slate-400">Menghapus kargo dari sistem secara aman (Soft Delete).</span>
+                        </div>
+                        <button onclick="window.deleteActiveShipment()" class="px-4 py-2 bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30 text-xs font-semibold rounded-xl transition">
+                            🗑️ Hapus Kargo Ini
+                        </button>
+                    </div>
                 </div>
 
                 <!-- TAB 2: PETA RUTE -->
@@ -702,6 +713,111 @@
         </div>
     </div>
 
+    <!-- MODAL TAMBAH ARMADA CARRIER BARU -->
+    <div id="new-carrier-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-lg p-6 shadow-2xl">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
+                <h3 class="text-base font-bold text-white">Daftarkan Armada Carrier Baru</h3>
+                <button onclick="window.closeNewCarrierModal()" class="text-slate-400 hover:text-white">✕</button>
+            </div>
+            <form onsubmit="window.handleCreateCarrier(event)" class="space-y-4">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Nama Perusahaan</label>
+                        <input type="text" id="carrier-name" required placeholder="Contoh: Maersk Line" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Kode SCAC (Unik)</label>
+                        <input type="text" id="carrier-code" required placeholder="Contoh: MAEU" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white uppercase font-mono">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Email Kontak</label>
+                        <input type="email" id="carrier-email" placeholder="ops@carrier.com" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Telepon Operasional</label>
+                        <input type="text" id="carrier-phone" placeholder="+62811..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Alamat Kantor Pusat</label>
+                    <textarea id="carrier-address" rows="2" placeholder="Alamat kantor perusahaan..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white"></textarea>
+                </div>
+                <div class="pt-4 border-t border-slate-800 flex justify-end gap-2">
+                    <button type="button" onclick="window.closeNewCarrierModal()" class="px-4 py-2 text-xs text-slate-400 hover:text-white">Batal</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white">Simpan Carrier</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL TAMBAH PELABUHAN / HUB LOKASI BARU -->
+    <div id="new-location-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-lg p-6 shadow-2xl">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
+                <h3 class="text-base font-bold text-white">Tambah Pelabuhan / Hub Logistik</h3>
+                <button onclick="window.closeNewLocationModal()" class="text-slate-400 hover:text-white">✕</button>
+            </div>
+            <form onsubmit="window.handleCreateLocation(event)" class="space-y-4">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Nama Pelabuhan / Hub</label>
+                        <input type="text" id="loc-name" required placeholder="Contoh: Tanjung Priok" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Kode LOCODE (Unik)</label>
+                        <input type="text" id="loc-code" required placeholder="Contoh: IDJKT" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white uppercase font-mono">
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Jenis Lokasi</label>
+                        <select id="loc-type" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white">
+                            <option value="port">Pelabuhan Laut (Port)</option>
+                            <option value="hub">Hub Logistik</option>
+                            <option value="warehouse">Gudang (Warehouse)</option>
+                            <option value="customs">Pos Bea Cukai</option>
+                            <option value="airport">Bandara Kargo</option>
+                            <option value="depot">Depo Kontainer</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Kota</label>
+                        <input type="text" id="loc-city" placeholder="Jakarta" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Negara</label>
+                        <input type="text" id="loc-country" placeholder="Indonesia" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white">
+                    </div>
+                </div>
+                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-bold uppercase text-slate-400">Titik Koordinat Geografis</span>
+                        <button type="button" onclick="window.autoGeocodeLocation()" class="text-[10px] font-semibold text-cyan-400 hover:text-cyan-300">
+                            🔍 Cari Koordinat Otomatis (Nominatim)
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[10px] text-slate-500 mb-1">Lintang (Latitude)</label>
+                            <input type="number" step="0.0001" id="loc-lat" required placeholder="-6.1018" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-xs text-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-slate-500 mb-1">Bujur (Longitude)</label>
+                            <input type="number" step="0.0001" id="loc-lng" required placeholder="106.8833" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-xs text-white">
+                        </div>
+                    </div>
+                </div>
+                <div class="pt-4 border-t border-slate-800 flex justify-end gap-2">
+                    <button type="button" onclick="window.closeNewLocationModal()" class="px-4 py-2 text-xs text-slate-400 hover:text-white">Batal</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white">Simpan Lokasi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- ========================================== -->
     <!-- 4. LOGIKA JAVASCRIPT APLIKASI UTAMA -->
     <!-- ========================================== -->
@@ -770,14 +886,35 @@
             views.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.classList.add('hidden');
+
+                const navKey = id.replace('-view', '');
+                const navBtn = document.getElementById(`nav-${navKey}`);
+                if (navBtn) {
+                    navBtn.classList.remove('bg-blue-600/20', 'text-blue-400', 'font-bold');
+                    navBtn.classList.add('text-slate-400');
+                }
             });
 
             const target = document.getElementById(viewId);
             if (target) target.classList.remove('hidden');
 
+            const activeNavKey = viewId.replace('-view', '');
+            const activeNavBtn = document.getElementById(`nav-${activeNavKey}`);
+            if (activeNavBtn) {
+                activeNavBtn.classList.add('bg-blue-600/20', 'text-blue-400', 'font-bold');
+                activeNavBtn.classList.remove('text-slate-400');
+            }
+
             if (viewId === 'dashboard-view') window.loadDashboardData();
             if (viewId === 'shipments-view') window.loadShipments(1);
-            if (viewId === 'map-view') window.initGlobalMap();
+            if (viewId === 'map-view') {
+                setTimeout(() => {
+                    window.initGlobalMap();
+                    if (window.appState.maps.global) {
+                        window.appState.maps.global.invalidateSize();
+                    }
+                }, 150);
+            }
             if (viewId === 'exceptions-view') window.loadExceptions();
             if (viewId === 'carriers-view') window.loadCarriers();
             if (viewId === 'locations-view') window.loadLocations();
@@ -1117,6 +1254,29 @@
                 document.getElementById('det-weight-vol').innerText = `${s.weight || 0} KG / ${s.volume || 0} CBM`;
                 document.getElementById('det-customer').innerText = s.customer ? s.customer.name : 'Muatan Umum';
 
+                // Hak Akses Fitur Hapus Kargo (Khusus Admin)
+                const dangerZone = document.getElementById('admin-shipment-danger-zone');
+                if (dangerZone) {
+                    if (window.appState.user && window.appState.user.role === 'admin') {
+                        dangerZone.classList.remove('hidden');
+                    } else {
+                        dangerZone.classList.add('hidden');
+                    }
+                }
+
+                // Hak Akses Tambah Milestone & Laporkan Kendala (Operator & Admin)
+                const isCustomer = window.appState.user && window.appState.user.role === 'customer';
+                const addEventBtn = document.getElementById('btn-add-event-toggle');
+                if (addEventBtn) {
+                    if (isCustomer) addEventBtn.classList.add('hidden');
+                    else addEventBtn.classList.remove('hidden');
+                }
+                const reportExcBtn = document.querySelector('#tab-exceptions button[onclick*="toggleReportExceptionForm"]');
+                if (reportExcBtn) {
+                    if (isCustomer) reportExcBtn.classList.add('hidden');
+                    else reportExcBtn.classList.remove('hidden');
+                }
+
                 window.renderLifecycleButtons(s);
                 window.renderTimeline(s.tracking_events || []);
                 window.renderExceptions(s.exceptions || []);
@@ -1133,6 +1293,23 @@
             window.appState.activeShipment = null;
         };
 
+        // Hapus Kargo Aktif (Khusus Administrator - Soft Delete)
+        window.deleteActiveShipment = async function() {
+            if (!window.appState.activeShipment) return;
+            const s = window.appState.activeShipment;
+            if (!confirm(`Konfirmasi: Apakah Anda yakin ingin menghapus kargo ${s.shipment_number}? Tindakan ini akan mengarsipkan kargo secara aman (soft delete).`)) return;
+
+            try {
+                await window.api(`/api/shipments/${s.id}`, { method: 'DELETE' });
+                window.toast(`Kargo ${s.shipment_number} berhasil dihapus dari sistem.`, 'success');
+                window.closeDetailModal();
+                window.loadShipments(1);
+                window.loadDashboardData();
+            } catch (err) {
+                window.toast(err.message, 'error');
+            }
+        };
+
         window.switchModalTab = function(tabId) {
             ['tab-overview', 'tab-map', 'tab-timeline', 'tab-exceptions'].forEach(id => {
                 document.getElementById(id).classList.add('hidden');
@@ -1140,10 +1317,15 @@
             });
 
             document.getElementById(tabId).classList.remove('hidden');
-            document.getElementById(`btn-${tabId}`).className = 'py-3 border-b-2 border-blue-500 text-blue-400';
+            document.getElementById(`btn-${tabId}`).className = 'py-3 border-b-2 border-blue-500 text-blue-400 font-semibold';
 
             if (tabId === 'tab-map' && window.appState.activeShipment) {
-                setTimeout(() => window.initDetailMap(window.appState.activeShipment.id), 100);
+                setTimeout(() => {
+                    window.initDetailMap(window.appState.activeShipment.id);
+                    if (window.appState.maps.detail) {
+                        window.appState.maps.detail.invalidateSize();
+                    }
+                }, 150);
             }
         };
 
@@ -1460,6 +1642,8 @@
             try {
                 const res = await window.api('/api/carriers');
                 const tbody = document.getElementById('carriers-tbody');
+                const isAdmin = window.appState.user && window.appState.user.role === 'admin';
+
                 tbody.innerHTML = res.data.map(c => `
                     <tr class="hover:bg-slate-800/40 transition">
                         <td class="py-3 px-4 font-bold text-white">${c.name}</td>
@@ -1467,11 +1651,66 @@
                         <td class="py-3 px-4 text-slate-400">${c.contact_email || '-'}</td>
                         <td class="py-3 px-4 text-slate-300 font-bold">${c.shipments_count || 0}</td>
                         <td class="py-3 px-4 text-right">
-                            <span class="text-xs text-emerald-400">Aktif</span>
+                            ${isAdmin ? `
+                                <button onclick="window.deleteCarrier(${c.id}, '${c.name.replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/20 text-[11px] font-semibold transition">
+                                    Hapus
+                                </button>
+                            ` : `<span class="text-xs text-emerald-400">Aktif</span>`}
                         </td>
                     </tr>
                 `).join('');
             } catch (err) {}
+        };
+
+        // Modal Tambah Armada Carrier
+        window.openNewCarrierModal = function() {
+            document.getElementById('carrier-name').value = '';
+            document.getElementById('carrier-code').value = '';
+            document.getElementById('carrier-email').value = '';
+            document.getElementById('carrier-phone').value = '';
+            document.getElementById('carrier-address').value = '';
+            document.getElementById('new-carrier-modal').classList.remove('hidden');
+        };
+
+        window.closeNewCarrierModal = function() {
+            document.getElementById('new-carrier-modal').classList.add('hidden');
+        };
+
+        window.handleCreateCarrier = async function(e) {
+            e.preventDefault();
+            const payload = {
+                name: document.getElementById('carrier-name').value.trim(),
+                code: document.getElementById('carrier-code').value.trim().toUpperCase(),
+                contact_email: document.getElementById('carrier-email').value.trim() || null,
+                contact_phone: document.getElementById('carrier-phone').value.trim() || null,
+                address: document.getElementById('carrier-address').value.trim() || null,
+            };
+
+            try {
+                const res = await window.api('/api/carriers', {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                window.toast(`Armada carrier ${res.data.name} (${res.data.code}) berhasil didaftarkan!`, 'success');
+                window.closeNewCarrierModal();
+                window.loadCarriers();
+                window.loadMasterReferences();
+            } catch (err) {
+                window.toast(err.message, 'error');
+            }
+        };
+
+        window.deleteCarrier = async function(id, name) {
+            if (!confirm(`Konfirmasi: Apakah Anda yakin ingin menghapus armada carrier "${name}"?`)) return;
+
+            try {
+                await window.api(`/api/carriers/${id}`, { method: 'DELETE' });
+                window.toast(`Armada carrier ${name} berhasil dihapus.`, 'success');
+                window.loadCarriers();
+                window.loadMasterReferences();
+            } catch (err) {
+                window.toast(err.message, 'error');
+            }
         };
 
         // Tampilan Master Pelabuhan & Cek Cuaca
@@ -1479,6 +1718,8 @@
             try {
                 const res = await window.api('/api/locations');
                 const tbody = document.getElementById('locations-tbody');
+                const isAdmin = window.appState.user && window.appState.user.role === 'admin';
+
                 tbody.innerHTML = res.data.map(loc => `
                     <tr class="hover:bg-slate-800/40 transition">
                         <td class="py-3 px-4 font-bold text-white">${loc.name}</td>
@@ -1486,14 +1727,100 @@
                         <td class="py-3 px-4 uppercase text-[10px] text-slate-400">${loc.type}</td>
                         <td class="py-3 px-4 text-slate-300">${loc.city || ''}, ${loc.country || ''}</td>
                         <td class="py-3 px-4 font-mono text-[11px] text-slate-400">${loc.latitude}, ${loc.longitude}</td>
-                        <td class="py-3 px-4 text-right">
-                            <button onclick="window.checkLiveWeather(${loc.latitude}, ${loc.longitude}, '${loc.name}')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-[11px] text-cyan-400 transition">
+                        <td class="py-3 px-4 text-right space-x-2">
+                            <button onclick="window.checkLiveWeather(${loc.latitude}, ${loc.longitude}, '${loc.name.replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-[11px] text-cyan-400 transition">
                                 ⛅ Cek Cuaca
                             </button>
+                            ${isAdmin ? `
+                                <button onclick="window.deleteLocation(${loc.id}, '${loc.name.replace(/'/g, "\\'")}')" class="px-2 py-1 rounded bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/20 text-[11px] font-semibold transition">
+                                    Hapus
+                                </button>
+                            ` : ''}
                         </td>
                     </tr>
                 `).join('');
             } catch (err) {}
+        };
+
+        // Modal Tambah Pelabuhan & Hub Lokasi
+        window.openNewLocationModal = function() {
+            document.getElementById('loc-name').value = '';
+            document.getElementById('loc-code').value = '';
+            document.getElementById('loc-type').value = 'port';
+            document.getElementById('loc-city').value = '';
+            document.getElementById('loc-country').value = '';
+            document.getElementById('loc-lat').value = '';
+            document.getElementById('loc-lng').value = '';
+            document.getElementById('new-location-modal').classList.remove('hidden');
+        };
+
+        window.closeNewLocationModal = function() {
+            document.getElementById('new-location-modal').classList.add('hidden');
+        };
+
+        window.autoGeocodeLocation = async function() {
+            const name = document.getElementById('loc-name').value.trim();
+            const city = document.getElementById('loc-city').value.trim();
+            const country = document.getElementById('loc-country').value.trim();
+
+            const query = [name, city, country].filter(Boolean).join(', ');
+            if (!query) {
+                window.toast('Ketikkan nama pelabuhan atau kota untuk mencari titik koordinat otomatis.', 'warning');
+                return;
+            }
+
+            try {
+                window.toast(`Mencari titik koordinat untuk "${query}" via Nominatim...`, 'info');
+                const res = await window.api(`/api/geocode?query=${encodeURIComponent(query)}`);
+                if (res.data && res.data.latitude && res.data.longitude) {
+                    document.getElementById('loc-lat').value = res.data.latitude;
+                    document.getElementById('loc-lng').value = res.data.longitude;
+                    window.toast(`Koordinat ditemukan: ${res.data.latitude}, ${res.data.longitude}`, 'success');
+                } else {
+                    window.toast('Koordinat tidak ditemukan. Silakan masukkan secara manual.', 'warning');
+                }
+            } catch (err) {
+                window.toast('Pencarian koordinat otomatis tidak berhasil. Masukkan koordinat secara manual.', 'warning');
+            }
+        };
+
+        window.handleCreateLocation = async function(e) {
+            e.preventDefault();
+            const payload = {
+                name: document.getElementById('loc-name').value.trim(),
+                code: document.getElementById('loc-code').value.trim().toUpperCase(),
+                type: document.getElementById('loc-type').value,
+                city: document.getElementById('loc-city').value.trim() || null,
+                country: document.getElementById('loc-country').value.trim() || null,
+                latitude: parseFloat(document.getElementById('loc-lat').value),
+                longitude: parseFloat(document.getElementById('loc-lng').value),
+            };
+
+            try {
+                const res = await window.api('/api/locations', {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                window.toast(`Lokasi pelabuhan/hub ${res.data.name} (${res.data.code}) berhasil didaftarkan!`, 'success');
+                window.closeNewLocationModal();
+                window.loadLocations();
+                window.loadMasterReferences();
+            } catch (err) {
+                window.toast(err.message, 'error');
+            }
+        };
+
+        window.deleteLocation = async function(id, name) {
+            if (!confirm(`Konfirmasi: Apakah Anda yakin ingin menghapus pelabuhan / hub "${name}"?`)) return;
+
+            try {
+                await window.api(`/api/locations/${id}`, { method: 'DELETE' });
+                window.toast(`Lokasi pelabuhan ${name} berhasil dihapus.`, 'success');
+                window.loadLocations();
+                window.loadMasterReferences();
+            } catch (err) {
+                window.toast(err.message, 'error');
+            }
         };
 
         window.checkLiveWeather = async function(lat, lon, name) {
@@ -1502,7 +1829,7 @@
                 const w = res.data;
                 window.toast(`${name}: ${w.condition}, Suhu: ${w.temperature}°C, Angin: ${w.wind_speed} km/j`, 'info');
             } catch (err) {
-                window.toast('Gagal memuat data cuaca.', 'error');
+                window.toast('Gagal memuat data cuaca maritim.', 'error');
             }
         };
 
@@ -1513,17 +1840,21 @@
                 const tbody = document.getElementById('audit-tbody');
                 tbody.innerHTML = res.data.map(a => `
                     <tr class="hover:bg-slate-800/40 transition">
-                        <td class="py-3 px-4 text-slate-400">${new Date(a.created_at).toLocaleString()}</td>
-                        <td class="py-3 px-4 font-bold text-cyan-400">${a.action}</td>
+                        <td class="py-3 px-4 text-slate-400 font-mono text-[11px]">${new Date(a.created_at).toLocaleString()}</td>
+                        <td class="py-3 px-4 font-bold text-cyan-400 font-mono text-[11px]">${a.action}</td>
                         <td class="py-3 px-4 text-slate-300">${a.user ? a.user.name : 'Sistem'}</td>
                         <td class="py-3 px-4 text-slate-400">${a.auditable_type || 'Umum'}</td>
-                        <td class="py-3 px-4 text-slate-500">${a.ip_address || '127.0.0.1'}</td>
+                        <td class="py-3 px-4 text-slate-500 font-mono text-[11px]">${a.ip_address || '127.0.0.1'}</td>
                     </tr>
                 `).join('');
             } catch (err) {}
         };
 
         document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('email')) {
+                window.fillDemo(urlParams.get('email'));
+            }
             window.renderAuthenticatedState();
         });
     </script>
