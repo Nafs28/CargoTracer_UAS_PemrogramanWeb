@@ -1,0 +1,341 @@
+{
+	"info": {
+		"_postman_id": "cargotrace-api-v1",
+		"name": "CargoTrace REST API Suite (v2.1)",
+		"description": "Comprehensive Postman test collection for CargoTrace Global Visibility & Tracking Platform with Sanctum Bearer token auth.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "1. Login (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Accept", "value": "application/json"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@cargotrace.com\",\n  \"password\": \"password\"\n}"
+						},
+						"url": "{{base_url}}/api/login"
+					}
+				},
+				{
+					"name": "2. Login (Operator)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Accept", "value": "application/json"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"operator@cargotrace.com\",\n  \"password\": \"password\"\n}"
+						},
+						"url": "{{base_url}}/api/login"
+					}
+				},
+				{
+					"name": "3. Login (Customer)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Accept", "value": "application/json"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"customer@cargotrace.com\",\n  \"password\": \"password\"\n}"
+						},
+						"url": "{{base_url}}/api/login"
+					}
+				},
+				{
+					"name": "4. Register Customer Account",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Accept", "value": "application/json"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"PT Nusantara Freight\",\n  \"email\": \"contact@nusantarafreq.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\",\n  \"role\": \"customer\",\n  \"phone\": \"+628123456789\"\n}"
+						},
+						"url": "{{base_url}}/api/register"
+					}
+				},
+				{
+					"name": "5. Get Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{"key": "Accept", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{auth_token}}"}
+						],
+						"url": "{{base_url}}/api/user"
+					}
+				},
+				{
+					"name": "6. Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Accept", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{auth_token}}"}
+						],
+						"url": "{{base_url}}/api/logout"
+					}
+				}
+			]
+		},
+		{
+			"name": "Shipments Module",
+			"item": [
+				{
+					"name": "List Shipments (Filtered & Scoped)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{"key": "Accept", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{auth_token}}"}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/shipments?page=1&status=IN_TRANSIT",
+							"host": ["{{base_url}}"],
+							"path": ["api", "shipments"],
+							"query": [
+								{"key": "page", "value": "1"},
+								{"key": "status", "value": "IN_TRANSIT"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Create Shipment Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Accept", "value": "application/json"},
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{auth_token}}"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"carrier_id\": 1,\n  \"origin_id\": 1,\n  \"destination_id\": 5,\n  \"cargo_type\": \"High Voltage Battery Packs\",\n  \"weight\": 18200,\n  \"volume\": 55.4,\n  \"expected_departure\": \"2026-12-01 10:00:00\",\n  \"expected_arrival\": \"2026-12-15 18:00:00\"\n}"
+						},
+						"url": "{{base_url}}/api/shipments"
+					}
+				},
+				{
+					"name": "Show Shipment Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{"key": "Accept", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{auth_token}}"}
+						],
+						"url": "{{base_url}}/api/shipments/1"
+					}
+				},
+				{
+					"name": "Transition Lifecycle Status",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{"key": "Accept", "value": "application/json"},
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{auth_token}}"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"BOOKED\"\n}"
+						},
+						"url": "{{base_url}}/api/shipments/6/status"
+					}
+				},
+				{
+					"name": "Get GIS Map Waypoints",
+					"request": {
+						"method": "GET",
+						"header": [
+							{"key": "Accept", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{auth_token}}"}
+						],
+						"url": "{{base_url}}/api/shipments/1/map"
+					}
+				}
+			]
+		},
+		{
+			"name": "Tracking Events Module",
+			"item": [
+				{
+					"name": "Get Shipment Tracking Timeline",
+					"request": {
+						"method": "GET",
+						"header": [
+							{"key": "Accept", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{auth_token}}"}
+						],
+						"url": "{{base_url}}/api/shipments/1/tracking"
+					}
+				},
+				{
+					"name": "Record Append-Only Tracking Milestone",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Accept", "value": "application/json"},
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{auth_token}}"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status_type\": \"IN_TRANSIT\",\n  \"latitude\": 5.2501,\n  \"longitude\": 98.1234,\n  \"description\": \"Vessel traversing Malacca Strait at 18 knots without navigational obstruction.\"\n}"
+						},
+						"url": "{{base_url}}/api/shipments/1/tracking"
+					}
+				}
+			]
+		},
+		{
+			"name": "Exceptions Lifecycle Module",
+			"item": [
+				{
+					"name": "List Active Exceptions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{"key": "Accept", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{auth_token}}"}
+						],
+						"url": "{{base_url}}/api/exceptions"
+					}
+				},
+				{
+					"name": "Flag New Incident / Exception",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Accept", "value": "application/json"},
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{auth_token}}"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"exception_type\": \"WEATHER_DELAY\",\n  \"severity\": \"HIGH\",\n  \"notes\": \"Typhoon activity in the South China Sea causing vessels to reduce cruising speed by 40%.\"\n}"
+						},
+						"url": "{{base_url}}/api/shipments/2/exceptions"
+					}
+				},
+				{
+					"name": "Resolve Exception",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{"key": "Accept", "value": "application/json"},
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{auth_token}}"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"RESOLVED\",\n  \"notes\": \"Weather cleared. Port authority confirmed priority berthing slot.\"\n}"
+						},
+						"url": "{{base_url}}/api/exceptions/1"
+					}
+				}
+			]
+		},
+		{
+			"name": "Operational Analytics Dashboard",
+			"item": [
+				{
+					"name": "Get Summary Metrics",
+					"request": {
+						"method": "GET",
+						"header": [
+							{"key": "Accept", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{auth_token}}"}
+						],
+						"url": "{{base_url}}/api/dashboard"
+					}
+				},
+				{
+					"name": "Get Shipments by Status Chart Data",
+					"request": {
+						"method": "GET",
+						"header": [
+							{"key": "Accept", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{auth_token}}"}
+						],
+						"url": "{{base_url}}/api/dashboard/shipments-by-status"
+					}
+				},
+				{
+					"name": "Get Shipments by Carrier Chart Data",
+					"request": {
+						"method": "GET",
+						"header": [
+							{"key": "Accept", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{auth_token}}"}
+						],
+						"url": "{{base_url}}/api/dashboard/shipments-by-carrier"
+					}
+				},
+				{
+					"name": "Get 14-Day Delay Trend",
+					"request": {
+						"method": "GET",
+						"header": [
+							{"key": "Accept", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{auth_token}}"}
+						],
+						"url": "{{base_url}}/api/dashboard/delay-trend"
+					}
+				}
+			]
+		},
+		{
+			"name": "External Resilient APIs",
+			"item": [
+				{
+					"name": "Geocode Query (Nominatim)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{"key": "Accept", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{auth_token}}"}
+						],
+						"url": "{{base_url}}/api/geocode?q=Rotterdam+Port"
+					}
+				},
+				{
+					"name": "Live Weather Query (Open-Meteo)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{"key": "Accept", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{auth_token}}"}
+						],
+						"url": "{{base_url}}/api/weather?lat=-6.1018&lon=106.8833"
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000"
+		},
+		{
+			"key": "auth_token",
+			"value": ""
+		}
+	]
+}
