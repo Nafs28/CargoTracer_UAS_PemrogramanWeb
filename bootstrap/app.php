@@ -15,7 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
-        $middleware->statefulApi();
+        // Clean stateless REST API authentication using Sanctum Bearer tokens (no 419 CSRF collision)
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
