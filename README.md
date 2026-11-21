@@ -1,196 +1,196 @@
-# 🚢 CargoTrace — Global Shipment Visibility & Tracking Platform
+# 🚢 CargoTrace — Platform Visibilitas & Pelacakan Kargo Global
 
-An enterprise logistics visibility platform delivering deterministic delay calculations, append-only historical tracking milestones, interactive GIS maritime waypoints, and automated exception escalation workflows.
-
----
-
-## 📑 Table of Contents
-1. [Project Overview & Problem Domain](#-project-overview--problem-domain)
-2. [User Roles & Authorization Matrix](#-user-roles--authorization-matrix)
-3. [Core Engineering Modules](#-core-engineering-modules)
-   - [Shipment Lifecycle State Machine](#1-shipment-lifecycle-state-machine)
-   - [Deterministic Delay Engine](#2-deterministic-delay-engine)
-   - [Append-Only Historical Tracking](#3-append-only-historical-tracking)
-   - [Exception Management Lifecycle](#4-exception-management-lifecycle)
-   - [GIS Map & Weather Integration](#5-gis-map--weather-integration)
-   - [Operational Analytics & Audit Trail](#6-operational-analytics--audit-trail)
-4. [System Architecture: Service Layer](#-system-architecture-service-layer)
-5. [Data Model & Schema (ERD)](#-data-model--schema-erd)
-6. [RESTful API Endpoints](#-restful-api-endpoints)
-7. [Automated Verification Tests](#-automated-verification-tests)
-8. [Quickstart & Demo Credentials](#-quickstart--demo-credentials)
-9. [Code Ownership & Defense Guide](#-code-ownership--defense-guide)
+Platform visibilitas logistik pengiriman kargo skala enterprise dengan kalkulasi keterlambatan deterministik otomatis, pencatatan milestone riwayat perjalanan *append-only*, pemetaan rute koordinat maritim berbasis GIS Leaflet.js, serta alur penanganan dan eskalasi kendala operasional kargo.
 
 ---
 
-## 🌐 Project Overview & Problem Domain
+## 📑 Daftar Isi
+1. [Ringkasan Proyek & Domain Masalah](#-ringkasan-proyek--domain-masalah)
+2. [Matriks Peran Pengguna & Hak Akses (RBAC)](#-matriks-peran-pengguna--hak-akses-rbac)
+3. [Modul Rekayasa Sistem Utama](#-modul-rekayasa-sistem-utama)
+   - [State Machine Siklus Hidup Kargo](#1-state-machine-siklus-hidup-kargo)
+   - [Delay Engine Deterministik](#2-delay-engine-deterministik)
+   - [Pencatatan Riwayat Append-Only](#3-pencatatan-riwayat-append-only)
+   - [Manajemen Kendala Kargo (Exceptions)](#4-manajemen-kendala-kargo-exceptions)
+   - [Peta GIS & Telemetri Cuaca Laut](#5-peta-gis--telemetri-cuaca-laut)
+   - [Dasbor Analitik & Jejak Audit](#6-dasbor-analitik--jejak-audit)
+4. [Arsitektur Sistem: Service Layer Pattern](#-arsitektur-sistem-service-layer-pattern)
+5. [Model Data & Diagram Relasi (ERD)](#-model-data--diagram-relasi-erd)
+6. [Daftar Endpoint RESTful API](#-daftar-endpoint-restful-api)
+7. [Hasil Pengujian Otomatis (Automated Tests)](#-hasil-pengujian-otomatis-automated-tests)
+8. [Panduan Instalasi & Akun Demo](#-panduan-instalasi--akun-demo)
+9. [Panduan Ujian & Pertanggungjawaban Kode (Code Defense)](#-panduan-ujian--pertanggungjawaban-kode-code-defense)
 
-In global ocean and multimodal logistics, shipment data is traditionally siloed across independent carriers, port authorities, and freight forwarders. Customers lack visibility while cargo is in transit, delays are discovered only after delivery deadlines have passed, and operational exceptions are handled reactively.
+---
+
+## 🌐 Ringkasan Proyek & Domain Masalah
+
+Dalam industri logistik maritim dan pengiriman kargo kontainer global, data operasional sering kali terpecah di berbagai pihak (perusahaan pelayaran, otoritas pelabuhan, dan ekspedisi). Pelanggan sering kali tidak mengetahui posisi aktual barang mereka di laut, keterlambatan baru diketahui setelah jadwal tiba lewat, dan gangguan operasional (seperti kendala bea cukai atau cuaca buruk) ditangani secara sporadis.
 
 ```
 ┌─────────────────────────────────┐        ┌──────────────────────────────────┐
-│        EXISTING PROBLEMS        │   ──►  │        CARGOTRACE SOLUTION       │
+│        MASALAH EKSISTING        │   ──►  │         SOLUSI CARGOTRACE        │
 ├─────────────────────────────────┤        ├──────────────────────────────────┤
-│ • Information scattered         │        │ • Centralized logistics hub      │
-│ • Blind customers in transit    │        │ • Live GIS map & waypoint trails │
-│ • Latent, unflagged delays      │        │ • Deterministic Delay Engine     │
-│ • Ad-hoc incident handling      │        │ • 3-stage Exception Lifecycle    │
+│ • Informasi kargo tersebar      │        │ • Hub logistik terpusat          │
+│ • Pelanggan buta posisi kapal   │        │ • Visualisasi rute GIS interaktif│
+│ • Keterlambatan tak terdeteksi  │        │ • Delay Engine deterministik     │
+│ • Penanganan masalah sporadis   │        │ • Alur eskalasi kendala 3 tahap  │
 └─────────────────────────────────┘        └──────────────────────────────────┘
 ```
 
-**CargoTrace solves this by providing:**
-- Full end-to-end operational visibility with GPS-coordinate timeline tracking.
-- Automatic delay detection based on contractual expected arrival versus estimated arrival.
-- Structured escalation handling for customs holds, weather delays, and port bottlenecks.
-- Role-based security ensuring customers only see their own cargo while logistics operators manage fleet operations.
+**Solusi yang Disediakan CargoTrace:**
+- Kontrol transparansi penuh (*end-to-end visibility*) berbasis koordinat lintang dan bujur nyata.
+- Deteksi keterlambatan otomatis deterministik berdasarkan perbandingan jadwal target vs perkiraan tiba.
+- Manajemen kendala operasional terstruktur (*customs hold*, *weather delay*, *port congestion*).
+- Pemisahan isolasi data penyewa (*tenant isolation*) agar pelanggan hanya dapat melihat kargo miliknya sendiri.
 
 ---
 
-## 👥 User Roles & Authorization Matrix
+## 👥 Matriks Peran Pengguna & Hak Akses (RBAC)
 
-A Role-Based Access Control (RBAC) matrix enforces operational boundaries and tenant isolation:
+Penerapan *Role-Based Access Control* (RBAC) membatasi wewenang operasional di tingkat backend:
 
 ```mermaid
 flowchart LR
-    A["Incoming Request"] --> B{"Authentication & Role Check"}
-    B -->|Administrator| C["Full Access: Master Data, Carriers, Hubs, Audit Trail, All Cargo"]
-    B -->|Logistics Operator| D["Operational Access: Transitions, Waypoints, Incidents"]
-    B -->|Customer| E["Tenant Scoped: Own Shipments Only, ETA, Map, Timeline"]
-    B -->|Unauthorized| F["403 Forbidden / JSON Error"]
+    A["Request Pengguna"] --> B{"Pemeriksaan Token & Role di Server"}
+    B -->|Administrator| C["Akses Penuh: Master Data, Carrier, Hub, Jejak Audit, Semua Kargo"]
+    B -->|Operator Logistik| D["Operasional: Transisi Status, Catat Milestone, Selesaikan Kendala"]
+    B -->|Pelanggan| E["Terisolasi: Hanya Kargo Milik Pribadi, ETA, Peta Rute, Timeline"]
+    B -->|Tanpa Izin| F["Tolak 403 Forbidden / Error JSON"]
 ```
 
-| Capabilities / Scope | Administrator | Logistics Operator | Customer |
+| Fitur / Wewenang | Administrator | Operator Logistik | Pelanggan (Customer) |
 | :--- | :---: | :---: | :---: |
-| View Operational Dashboard | ✅ Full Fleet | ✅ Full Fleet | ✅ Scoped (Own Shipments Only) |
-| Search & List Shipments | ✅ All Shipments | ✅ All Shipments | ✅ Scoped (Tenant Isolated) |
-| Create New Shipment Order | ✅ | ✅ | ✅ (Own Tenant Account) |
-| Transition Lifecycle Status | ✅ | ✅ | ❌ Forbidden (403) |
-| Soft-Delete Shipment | ✅ | ❌ Forbidden (403) | ❌ Forbidden (403) |
-| Record Tracking Milestones | ✅ | ✅ | ❌ Forbidden (403) |
-| Report & Resolve Exceptions | ✅ | ✅ | ❌ Forbidden (View Only) |
-| Manage Carrier Fleet | ✅ | ❌ Forbidden (403) | ❌ Forbidden (403) |
-| Manage Ports & Hub Locations | ✅ | ❌ Forbidden (403) | ❌ Forbidden (403) |
-| Inspect System Audit Trail | ✅ | ❌ Forbidden (403) | ❌ Forbidden (403) |
+| Melihat Dasbor Analitik | ✅ Seluruh Armada | ✅ Seluruh Armada | ✅ Dibatasi (Hanya Kargo Sendiri) |
+| Mencari & Melihat Direktori Kargo | ✅ Seluruh Kargo | ✅ Seluruh Kargo | ✅ Terisolasi (Hanya Kargo Sendiri) |
+| Membuat Order Kargo Baru | ✅ | ✅ | ✅ (Atas Nama Akun Sendiri) |
+| Transisi Status Siklus Hidup | ✅ | ✅ | ❌ Ditolak (403 Forbidden) |
+| Menghapus Kargo (*Soft-Delete*) | ✅ | ❌ Ditolak (403 Forbidden) | ❌ Ditolak (403 Forbidden) |
+| Mencatat Milestone Pelacakan | ✅ | ✅ | ❌ Ditolak (403 Forbidden) |
+| Melaporkan & Menyelesaikan Kendala | ✅ | ✅ | ❌ Ditolak (Hanya Melihat) |
+| Mengelola Data Master Carrier | ✅ | ❌ Ditolak (403 Forbidden) | ❌ Ditolak (403 Forbidden) |
+| Mengelola Master Pelabuhan & Hub | ✅ | ❌ Ditolak (403 Forbidden) | ❌ Ditolak (403 Forbidden) |
+| Memeriksa Jejak Audit Forensik | ✅ | ❌ Ditolak (403 Forbidden) | ❌ Ditolak (403 Forbidden) |
 
 ---
 
-## ⚙️ Core Engineering Modules
+## ⚙️ Modul Rekayasa Sistem Utama
 
-### 1. Shipment Lifecycle State Machine
-Status transitions follow an enforced sequential state machine:
+### 1. State Machine Siklus Hidup Kargo
+Status kargo diatur secara ketat melalui mesin status berurutan di `ShipmentService`:
 
 ```mermaid
 stateDiagram-v2
-    [*] --> CREATED: Order Generated
-    CREATED --> BOOKED: Fleet & Carrier Confirmed
-    BOOKED --> PICKED_UP: Cargo Handed to Carrier
-    PICKED_UP --> IN_TRANSIT: Vessel Underway
-    IN_TRANSIT --> DELIVERED: Final Port Discharge
-    DELIVERED --> [*]: Terminal State (Permanently Locked)
+    [*] --> CREATED: Order Dibuat
+    CREATED --> BOOKED: Konfirmasi Armada & Jadwal
+    BOOKED --> PICKED_UP: Barang Diterima Operator
+    PICKED_UP --> IN_TRANSIT: Perjalanan Antar Hub
+    IN_TRANSIT --> DELIVERED: Sampai di Penerima Akhir
+    DELIVERED --> [*]: Status Terminal (Terkunci Permanen)
 
-    CREATED --> CANCELLED: Order Aborted
-    BOOKED --> CANCELLED: Carrier Cancelled
-    PICKED_UP --> CANCELLED: Emergency Recall
-    IN_TRANSIT --> CANCELLED: Formal Cancellation
-    CANCELLED --> [*]: Terminal State (Permanently Locked)
+    CREATED --> CANCELLED: Order Dibatalkan
+    BOOKED --> CANCELLED: Armada Batal
+    PICKED_UP --> CANCELLED: Pembatalan Darurat
+    IN_TRANSIT --> CANCELLED: Pembatalan Resmi
+    CANCELLED --> [*]: Status Terminal (Terkunci Permanen)
 ```
 
-- **Validation:** Illegal state jumps (e.g., `CREATED` &rarr; `DELIVERED`) are rejected with `422 Unprocessable Entity`.
-- **Terminal States:** Once marked `DELIVERED` or `CANCELLED`, records become immutable.
+- **Validasi Backend:** Upaya melompati urutan (misalnya dari `CREATED` langsung loncat ke `DELIVERED`) akan ditolak dengan kode respon `422 Unprocessable Entity`.
+- **Status Terminal:** Kargo berstatus `DELIVERED` atau `CANCELLED` terkunci permanen dan tidak dapat diubah lagi.
 
 ---
 
-### 2. Deterministic Delay Engine
-Calculates shipment schedule variance dynamically:
+### 2. Delay Engine Deterministik
+Menghitung deviasi jadwal pengiriman secara otomatis:
 
-$$\Delta t = \text{Estimated Arrival (ETA)} - \text{Expected Arrival}$$
+$$\Delta t = \text{Perkiraan Tiba (ETA)} - \text{Jadwal Target (Expected)}$$
 
-- If $\Delta t \le 0 \implies \text{is\_delayed} = \text{false}, \text{delay\_severity} = \text{null}$
-- If $\Delta t > 0 \implies \text{is\_delayed} = \text{true}$ with severity categorization:
-  - **LOW:** $\Delta t \in (0, 6\text{ hours}]$
-  - **MEDIUM:** $\Delta t \in (6, 24\text{ hours}]$
-  - **HIGH:** $\Delta t > 24\text{ hours}$
-
----
-
-### 3. Append-Only Historical Tracking
-- **Immutability:** Milestone records in `tracking_events` cannot overwrite previous entries.
-- **Chronological Rule:** Any new milestone must satisfy $t_{\text{new}} \ge t_{\text{latest}}$.
-- **Dynamic Current Location:** The platform resolves the vessel's current position from the latest valid coordinate entry.
+- Jika $\Delta t \le 0 \implies \text{is\_delayed} = \text{false}, \text{delay\_severity} = \text{null}$
+- Jika $\Delta t > 0 \implies \text{is\_delayed} = \text{true}$ dengan klasifikasi keparahan:
+  - **RENDAH (LOW):** $\Delta t \in (0, 6\text{ jam}]$
+  - **SEDANG (MEDIUM):** $\Delta t \in (6, 24\text{ jam}]$
+  - **TINGGI (HIGH):** $\Delta t > 24\text{ jam}$
 
 ---
 
-### 4. Exception Management Lifecycle
-Operational disruptions progress through a formalized three-stage resolution pipeline:
-
-$$\text{OPEN} \longrightarrow \text{INVESTIGATING} \longrightarrow \text{RESOLVED}$$
-
-- **Incident Types:** `CUSTOMS_HOLD`, `WEATHER_DELAY`, `PORT_CONGESTION`, `DAMAGED`, `MISROUTED`, `DOCUMENTATION_ISSUE`.
-- **Resolution:** Tracks root-cause investigation notes, timestamps resolution ($t_{\text{resolved}}$), and automatically dispatches customer notifications.
+### 3. Pencatatan Riwayat Append-Only
+- **Integritas Data:** Data pada tabel `tracking_events` bersifat *append-only* (tidak boleh menimpa event sebelumnya).
+- **Aturan Kronologis:** Timestamp setiap milestone baru divalidasi tidak boleh mendahului milestone terakhir ($t_{\text{baru}} \ge t_{\text{terakhir}}$).
+- **Posisi Terkini Dinamis:** Sistem mengekstrak lokasi kapal secara langsung dari event koordinat valid paling baru.
 
 ---
 
-### 5. GIS Map & Weather Integration
-- **Interactive Route Mapping:** Visualizes origin port, maritime transit waypoints, and destination hub via Leaflet.js and OpenStreetMap.
-- **Resilient Geocoding:** Converts address queries to coordinate pairs with a 24-hour cache layer and embedded offline fallback coordinates for major world ports.
-- **Real-Time Weather Telemetry:** Fetches live marine weather (temperature, wind velocity, precipitation) at active coordinate points with a 30-minute cache layer.
+### 4. Manajemen Kendala Kargo (Exceptions)
+Kendala operasional dikelola melalui alur penyelesaian 3 tahap:
+
+$$\text{OPEN (Terbuka)} \longrightarrow \text{INVESTIGATING (Dalam Penyelidikan)} \longrightarrow \text{RESOLVED (Tuntas)}$$
+
+- **Kategori Kendala:** `CUSTOMS_HOLD` (Tahanan Bea Cukai), `WEATHER_DELAY` (Cuaca Buruk), `PORT_CONGESTION` (Kongesi Pelabuhan), `DAMAGED` (Kerusakan), `MISROUTED` (Salah Rute), `DOCUMENTATION_ISSUE` (Kendala Dokumen).
+- **Resolusi:** Menyimpan catatan investigasi, mencatat waktu penyelesaian ($t_{\text{resolved}}$), serta mengirimkan notifikasi instan ke pelanggan.
 
 ---
 
-### 6. Operational Analytics & Audit Trail
-- **Live Metrics Dashboard:** Aggregates real-time order counts, active in-transit vessels, on-time delivery ratios, and open incidents.
-- **Visual Analytics:** Interactive status breakdown charts, carrier volume distributions, and 14-day SLA delivery cadence trends.
-- **Forensic Audit Logging:** Records every critical mutation (actor, action, auditable model, IP address, previous state JSON, and new state JSON).
+### 5. Peta GIS & Telemetri Cuaca Laut
+- **Visualisasi Rute:** Menampilkan garis polyline interaktif yang menghubungkan pelabuhan asal, titik transit laut, dan pelabuhan tujuan via Leaflet.js & OpenStreetMap.
+- **Geocoding Tangguh:** Mengonversi nama kota/pelabuhan menjadi titik koordinat dengan cache 24 jam serta fallback koordinat statis luring untuk pelabuhan-pelabuhan utama dunia.
+- **Telemetri Cuaca Nyata:** Memeriksa suhu udara, kelembaban, dan kecepatan angin maritim terkini via Open-Meteo API dengan cache 30 menit.
 
 ---
 
-## 🏛️ System Architecture: Service Layer
+### 6. Dasbor Analitik & Jejak Audit
+- **Metrik Agregasi Langsung:** Menghitung total pengiriman kargo, kapal yang sedang aktif berlayar, persentase ketepatan waktu pengiriman, serta jumlah kendala terbuka.
+- **Grafik Interaktif:** Visualisasi Chart.js berupa grafik donat status pengiriman, grafik batang kapasitas per armada, dan grafik tren pengiriman 14 hari.
+- **Jejak Audit Forensik:** Mencatat setiap mutasi data kritis (aktor, aksi, tipe model, alamat IP, data lama JSON, dan data baru JSON) di tabel `audit_logs`.
 
-Business logic is organized into dedicated Services to ensure modularity and comprehensive testability:
+---
+
+## 🏛️ Arsitektur Sistem: Service Layer Pattern
+
+Memisahkan logika bisnis dari Controller guna mencegah *Fat Controller Antipattern*:
 
 ```
 ┌─────────────────────────────────┐
-│     HTTP Routing & Gateways     │ (Sanctum Auth & Role Middleware)
+│     Routing & Gerbang Akses     │ (Sanctum Auth & Middleware Role)
 └────────────────┬────────────────┘
                  ▼
 ┌─────────────────────────────────┐
-│        API Controllers          │ (Request Validation & HTTP Status Serialization)
+│        API Controllers          │ (Validasi Input & Serialisasi Respon JSON)
 └────────────────┬────────────────┘
                  ▼
 ┌─────────────────────────────────┐
 │         Service Layer           │
 ├─────────────────────────────────┤
-│ • ShipmentService               │ (Lifecycle transitions, tracking numbers)
-│ • TrackingService               │ (Chronological events & coordinate tracking)
-│ • EtaService                    │ (Delay delta calculations & severity matrix)
-│ • ExceptionService              │ (Incident management pipeline)
-│ • GeocodingService              │ (Resilient geocoding & fallbacks)
-│ • WeatherService                │ (Live marine meteorological telemetry)
-│ • DashboardService              │ (Aggregated analytical metrics & chart data)
-│ • AuditService                  │ (Forensic change tracking)
+│ • ShipmentService               │ (Transisi status, penomoran kargo unik)
+│ • TrackingService               │ (Perekaman riwayat append-only & koordinat)
+│ • EtaService                    │ (Kalkulasi rumus delay & tingkat keparahan)
+│ • ExceptionService              │ (Alur penanganan kendala & resolusi)
+│ • GeocodingService              │ (Geocoding tangguh & fallback koordinat)
+│ • WeatherService                │ (Pemeriksaan telemetri cuaca maritim)
+│ • DashboardService              │ (Agregasi metrik analitik & data grafik)
+│ • AuditService                  │ (Pencatatan jejak audit forensik)
 └────────────────┬────────────────┘
                  ▼
 ┌─────────────────────────────────┐
-│      Database & Persistence     │ (Relational models & scopes)
+│       Database & Model ORM      │ (Relasi database & scope isolasi tenant)
 └─────────────────────────────────┘
 ```
 
 ---
 
-## 🗄️ Data Model & Schema (ERD)
+## 🗄️ Model Data & Diagram Relasi (ERD)
 
 ```mermaid
 erDiagram
-    users ||--o{ shipments : "owns"
-    users ||--o{ tracking_events : "records"
-    users ||--o{ audit_logs : "triggers"
-    carriers ||--o{ shipments : "transports"
-    locations ||--o{ shipments : "origin / destination"
-    locations ||--o{ tracking_events : "occurs_at"
-    shipments ||--o{ shipment_items : "contains"
-    shipments ||--o{ tracking_events : "has_history"
-    shipments ||--o{ shipment_exceptions : "encounters"
-    shipments ||--o{ notifications : "receives"
+    users ||--o{ shipments : "memiliki"
+    users ||--o{ tracking_events : "mencatat"
+    users ||--o{ audit_logs : "memicu"
+    carriers ||--o{ shipments : "mengangkut"
+    locations ||--o{ shipments : "asal / tujuan"
+    locations ||--o{ tracking_events : "berlokasi_di"
+    shipments ||--o{ shipment_items : "berisi"
+    shipments ||--o{ tracking_events : "memiliki_riwayat"
+    shipments ||--o{ shipment_exceptions : "mengalami"
+    shipments ||--o{ notifications : "menerima"
 
     users {
         bigint id PK
@@ -236,44 +236,44 @@ erDiagram
 
 ---
 
-## 🔌 RESTful API Endpoints
+## 🔌 Daftar Endpoint RESTful API
 
-All responses follow a consistent envelope contract: `{ "success": boolean, "data": ..., "message": string }`.
+Seluruh respon menggunakan struktur JSON standar: `{ "success": boolean, "data": ..., "message": string }`.
 
-| Method | Endpoint | Description | Access Scope |
+| Metode | URI Endpoint | Deskripsi | Akses Peran |
 | :--- | :--- | :--- | :--- |
-| `POST` | `/api/register` | Customer account registration | Public |
-| `POST` | `/api/login` | Obtain Bearer authentication token | Public |
-| `POST` | `/api/logout` | Revoke active token | Authenticated |
-| `GET` | `/api/user` | Current authenticated profile | Authenticated |
-| `GET` | `/api/dashboard` | Aggregated KPI operational summary | Authenticated (Scoped) |
-| `GET` | `/api/dashboard/shipments-by-status` | Status distribution for chart | Authenticated |
-| `GET` | `/api/dashboard/shipments-by-carrier`| Carrier volume share for chart | Authenticated |
-| `GET` | `/api/dashboard/delay-trend` | 14-day SLA cadence data for chart | Authenticated |
-| `GET` | `/api/shipments` | List shipments (search, filter, pagination) | Authenticated (Scoped) |
-| `POST` | `/api/shipments` | Create new shipment order | Admin, Operator, Customer |
-| `GET` | `/api/shipments/{id}` | Detailed shipment record & waypoints | Scoped Tenant / Ops |
-| `PATCH` | `/api/shipments/{id}/status` | Execute lifecycle status transition | Admin, Operator |
-| `DELETE` | `/api/shipments/{id}` | Soft-delete shipment record | Admin |
-| `GET` | `/api/shipments/{id}/map` | GeoJSON coordinates for route visualization | Scoped Tenant / Ops |
-| `GET` | `/api/shipments/{id}/tracking`| Chronological timeline milestones | Scoped Tenant / Ops |
-| `POST` | `/api/shipments/{id}/tracking`| Append new tracking milestone | Admin, Operator |
-| `GET` | `/api/exceptions` | Active operational incidents | Admin, Operator |
-| `POST` | `/api/shipments/{id}/exceptions` | Flag new operational incident | Admin, Operator |
-| `PATCH` | `/api/exceptions/{id}` | Update investigation or resolve incident | Admin, Operator |
-| `GET/POST`| `/api/carriers` | Manage carrier fleet records | Admin (Read: All) |
-| `GET/POST`| `/api/locations` | Manage hub & port master records | Admin (Read: All) |
-| `GET` | `/api/geocode` | Resilient geocoding lookup | Authenticated |
-| `GET` | `/api/weather` | Live marine weather telemetry | Authenticated |
-| `GET` | `/api/audit-logs` | Forensic change log viewer | Admin |
+| `POST` | `/api/register` | Pendaftaran akun pelanggan mandiri | Publik |
+| `POST` | `/api/login` | Mendapatkan token autentikasi Bearer | Publik |
+| `POST` | `/api/logout` | Revoke token autentikasi aktif | Authenticated |
+| `GET` | `/api/user` | Data profil pengguna yang sedang login | Authenticated |
+| `GET` | `/api/dashboard` | Ringkasan metrik analitik operasional | Authenticated (Scoped) |
+| `GET` | `/api/dashboard/shipments-by-status` | Data distribusi status kargo (Grafik) | Authenticated |
+| `GET` | `/api/dashboard/shipments-by-carrier`| Data volume kargo per armada (Grafik) | Authenticated |
+| `GET` | `/api/dashboard/delay-trend` | Data tren pengiriman 14 hari (Grafik) | Authenticated |
+| `GET` | `/api/shipments` | Daftar kargo (pencarian, filter, paginasi) | Authenticated (Scoped) |
+| `POST` | `/api/shipments` | Membuat order pengiriman kargo baru | Admin, Operator, Pelanggan |
+| `GET` | `/api/shipments/{id}` | Detail lengkap kargo beserta relasinya | Scoped Tenant / Ops |
+| `PATCH` | `/api/shipments/{id}/status` | Transisi status kargo berurutan | Admin, Operator |
+| `DELETE` | `/api/shipments/{id}` | Hapus kargo (*soft-delete*) | Admin |
+| `GET` | `/api/shipments/{id}/map` | Titik koordinat rute untuk Leaflet.js | Scoped Tenant / Ops |
+| `GET` | `/api/shipments/{id}/tracking`| Riwayat kronologis milestone perjalanan | Scoped Tenant / Ops |
+| `POST` | `/api/shipments/{id}/tracking`| Mencatat milestone kargo baru | Admin, Operator |
+| `GET` | `/api/exceptions` | Daftar seluruh kendala aktif di sistem | Admin, Operator |
+| `POST` | `/api/shipments/{id}/exceptions` | Melaporkan kendala kargo baru | Admin, Operator |
+| `PATCH` | `/api/exceptions/{id}` | Update investigasi atau selesaikan kendala | Admin, Operator |
+| `GET/POST`| `/api/carriers` | Resource data master armada carrier | Admin (Baca: Semua) |
+| `GET/POST`| `/api/locations` | Resource data master pelabuhan & hub | Admin (Baca: Semua) |
+| `GET` | `/api/geocode` | Query geocoding alamat ke koordinat | Authenticated |
+| `GET` | `/api/weather` | Query telemetri cuaca laut titik koordinat | Authenticated |
+| `GET` | `/api/audit-logs` | Penampil jejak audit forensik sistem | Admin |
 
-> A Postman Collection v2.1 is available at [`cargotrace_postman_collection.json`](file:///d:/Antigravity/UAS%20WEB/cargotrace/cargotrace_postman_collection.json).
+> File koleksi Postman v2.1 siap pakai tersedia di: [`cargotrace_postman_collection.json`](file:///d:/Antigravity/UAS%20WEB/cargotrace/cargotrace_postman_collection.json).
 
 ---
 
-## 🧪 Automated Verification Tests
+## 🧪 Hasil Pengujian Otomatis (Automated Tests)
 
-The platform is covered by an automated test suite verifying security, data isolation, lifecycle rules, and mathematical calculations:
+Sistem telah diuji secara komprehensif menggunakan **PHPUnit** dengan 21 pengujian fitur yang mencakup autentikasi, isolasi data, aturan delay, dan validasi transisi status:
 
 ```
 PASS  Tests\Feature\AuthTest
@@ -303,47 +303,47 @@ PASS  Tests\Feature\StatusTransitionTest
 ✓ delivered is terminal state and cannot transition
 ✓ cancelled is terminal state
 
-Tests:    21 passed (71 assertions)
+Tests:    21 passed (71 assertions) — 100% Lulus
 ```
 
 ---
 
-## 🚀 Quickstart & Demo Credentials
+## 🚀 Panduan Instalasi & Akun Demo
 
-### Setup Commands
+### Perintah Menjalankan Aplikasi
 ```bash
-# 1. Initialize environment & database
+# 1. Inisialisasi database dan seed data sintetis realistis
 php artisan migrate:fresh --seed
 
-# 2. Run automated test suite
+# 2. Jalankan rangkaian pengujian otomatis
 php artisan test
 
-# 3. Start local development server
+# 3. Jalankan server lokal
 php artisan serve
 ```
 
-Access the interface at **[http://127.0.0.1:8000/app](http://127.0.0.1:8000/app)**.
+Akses aplikasi langsung di browser: **[http://127.0.0.1:8000/app](http://127.0.0.1:8000/app)**.
 
-### Pre-Seeded Accounts
-All accounts share the password: `password`
+### Akun Demo Siap Pakai
+Seluruh akun menggunakan kata sandi (password): `password`
 
-| Role | Email Address | Description |
+| Peran (Role) | Alamat Email | Deskripsi Hak Akses |
 | :--- | :--- | :--- |
-| **Administrator** | `admin@cargotrace.com` | Full administrative visibility across all carriers, locations, and audit trails |
-| **Logistics Operator** | `operator@cargotrace.com` | Operational control: milestone logging, state transitions, incident resolution |
-| **Customer** | `customer@cargotrace.com` | Tenant isolated: restricted strictly to PT Global Logistik Nusantara shipments |
+| **Administrator** | `admin@cargotrace.com` | Akses penuh seluruh master data, armada, pelabuhan, jejak audit, dan kargo |
+| **Operator Logistik** | `operator@cargotrace.com` | Operasional armada: catat milestone kargo, transisi status, selesaikan kendala |
+| **Pelanggan (Customer)** | `customer@cargotrace.com` | Terisolasi secara ketat: hanya kargo milik PT Global Logistik Nusantara |
 
 ---
 
-## 🎓 Code Ownership & Defense Guide
+## 🎓 Panduan Ujian & Pertanggungjawaban Kode (Code Defense)
 
-Key talking points for live interview verification:
+Poin-poin teknis untuk menghadapi sesi tanya jawab dosen penguji:
 
-1. **Service Layer Separation:**  
-   Cross-cutting concerns (state validation, delay recalculation, audit logging, customer notifications) reside in `app/Services/` rather than controllers, enabling isolated unit testing.
-2. **Customer Tenant Isolation:**  
-   `ShipmentService::getShipmentsForUser()` checks if `$user->isCustomer()`. When true, an Eloquent scope `$query->where('customer_id', $user->id)` is appended to prevent data leaks across organizations.
-3. **Delay Calculation Determinism:**  
-   `EtaService::calculateDelay()` takes the difference between expected and estimated arrival in hours. When positive, it classifies the incident into `LOW` ($\le 6\text{h}$), `MEDIUM` ($\le 24\text{h}$), or `HIGH` ($> 24\text{h}$).
-4. **State Transition Concurrency & Terminal States:**  
-   `ShipmentService::transitionStatus()` uses atomic database transactions to guarantee integrity, and rejects changes to shipments in `DELIVERED` or `CANCELLED` states.
+1. **Mengapa menerapkan Service Layer Pattern bukan Controller gemuk (*Fat Controller*)?**  
+   *Proses logistik melibatkan banyak keterikatan silang (*cross-cutting concerns*): validasi status mesin, kalkulasi ulang keterlambatan otomatis, pencatatan jejak audit, dan notifikasi ke pelanggan. Memusatkan logika ini di Service Layer (`app/Services/`) membuat kode dapat diuji secara terisolasi via unit testing dan mencegah kode controller berantakan.*
+2. **Bagaimana cara kerja Isolasi Tenant (*Tenant Isolation*) pelanggan?**  
+   *Di `ShipmentService::getShipmentsForUser()`, sistem memeriksa apakah `$user->isCustomer()`. Jika benar, scope Eloquent `$query->where('customer_id', $user->id)` otomatis disisipkan sehingga pelanggan tidak dapat mengakses data kargo milik perusahaan lain.*
+3. **Bagaimana Delay Engine menentukan tingkat keparahan (*Severity*)?**  
+   *Metode `EtaService::calculateDelay()` membandingkan jadwal target `$expectedArrival` dengan perkiraan tiba aktual. Jika selisihnya positif, sistem mengklasifikasikan durasi keterlambatan ke dalam kategori deterministik: $\le 6\text{ jam} \implies \text{LOW}$, $\le 24\text{ jam} \implies \text{MEDIUM}$, dan $> 24\text{ jam} \implies \text{HIGH}$.*
+4. **Bagaimana transisi status dilindungi dari lompatan status ilegal?**  
+   *Metode `ShipmentService::transitionStatus()` memvalidasi status baru terhadap daftar konstanta `VALID_TRANSITIONS` dalam transaksi atomik database (`DB::transaction()`). Selain itu, status terminal (`DELIVERED` dan `CANCELLED`) ditolak keras dari perubahan status lanjutan.*

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-950 text-slate-100">
+<html lang="id" class="h-full bg-slate-950 text-slate-100">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CargoTrace — Global Shipment Visibility & Tracking Platform</title>
+    <title>CargoTrace — Platform Visibilitas & Pelacakan Kargo Global</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,13 +23,13 @@
                 </div>
                 <div>
                     <span class="text-xl font-bold tracking-tight text-white">Cargo<span class="text-blue-500">Trace</span></span>
-                    <span class="hidden md:inline-block ml-2 px-2 py-0.5 text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full">v1.0 UAS Portfolio</span>
+                    <span class="hidden md:inline-block ml-2 px-2 py-0.5 text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full">Proyek UAS Pemrograman Web 2</span>
                 </div>
             </div>
             <div class="flex items-center gap-4">
-                <a href="#demo-accounts" class="text-sm text-slate-400 hover:text-white transition">Demo Credentials</a>
+                <a href="#demo-accounts" class="text-sm text-slate-400 hover:text-white transition">Akun Demo</a>
                 <a href="/app" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold shadow-lg shadow-blue-600/30 transition transform hover:-translate-y-0.5">
-                    Launch Platform →
+                    Buka Aplikasi →
                 </a>
             </div>
         </div>
@@ -41,21 +41,21 @@
         <div class="max-w-7xl mx-auto px-6 text-center">
             <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-blue-500/20 bg-blue-500/10 text-blue-400 text-xs font-semibold mb-8">
                 <span class="flex h-2 w-2 rounded-full bg-blue-400 animate-ping"></span>
-                Beyond CRUD: End-to-End Visibility Engine
+                Beyond CRUD: Mesin Visibilitas Logistik End-to-End
             </div>
             <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white max-w-4xl mx-auto leading-tight">
-                Real-Time Ocean & Freight <br>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-300">Intelligent Visibility</span>
+                Pelacakan Kargo Maritim & Darat <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-300">Cerdas & Real-Time</span>
             </h1>
             <p class="mt-6 text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto font-normal">
-                Deterministic delay calculations, append-only historical milestones, Leaflet.js coordinate tracking, and automated exception escalation pipelines.
+                Kalkulasi keterlambatan deterministik otomatis, riwayat perjalanan append-only, pemetaan GIS Leaflet.js, dan alur eskalasi penanganan kendala kargo.
             </p>
             <div class="mt-10 flex flex-wrap justify-center gap-4">
                 <a href="/app" class="px-8 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-semibold shadow-xl shadow-blue-500/25 transition transform hover:-translate-y-0.5">
-                    Open Live Portal
+                    Masuk ke Workspace
                 </a>
                 <a href="#features" class="px-8 py-3.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white font-semibold transition">
-                    Explore Architecture
+                    Jelajahi Fitur Utama
                 </a>
             </div>
         </div>
@@ -65,8 +65,8 @@
     <section id="features" class="py-20 border-t border-slate-800/80 bg-slate-900/30">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center max-w-2xl mx-auto mb-16">
-                <h2 class="text-xs uppercase tracking-widest text-blue-400 font-bold mb-3">Enterprise Engineering</h2>
-                <p class="text-3xl font-bold text-white tracking-tight">Core Operational Modules</p>
+                <h2 class="text-xs uppercase tracking-widest text-blue-400 font-bold mb-3">Rekayasa Perangkat Lunak</h2>
+                <p class="text-3xl font-bold text-white tracking-tight">Modul Operasional Utama</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <!-- Card 1 -->
@@ -74,9 +74,9 @@
                     <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition">
                         ⏱️
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-3">Deterministic Delay Engine</h3>
+                    <h3 class="text-xl font-bold text-white mb-3">Delay Engine Deterministik</h3>
                     <p class="text-sm text-slate-400 leading-relaxed">
-                        Automated delta calculation (\(\Delta t = \text{ETA} - \text{Expected}\)) categorized into LOW, MEDIUM, and HIGH severity thresholds with automated alerts.
+                        Kalkulasi otomatis selisih waktu kedatangan aktual versus perkiraan (\(\Delta t = \text{ETA} - \text{Expected}\)) yang dikategorikan dalam tingkat keparahan RENDAH, SEDANG, dan TINGGI.
                     </p>
                 </div>
                 <!-- Card 2 -->
@@ -84,9 +84,9 @@
                     <div class="w-12 h-12 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition">
                         🗺️
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-3">Leaflet.js GIS Mapping</h3>
+                    <h3 class="text-xl font-bold text-white mb-3">Peta GIS Interaktif Leaflet.js</h3>
                     <p class="text-sm text-slate-400 leading-relaxed">
-                        Visual polyline waypoint routes connecting Origin, Mid-Ocean Tracking Milestones, and Destination hubs powered by OpenStreetMap & Nominatim Geocoding.
+                        Visualisasi rute polyline koordinat nyata yang menghubungkan pelabuhan asal, titik koordinat laut tengah jalan, hingga pelabuhan tujuan dengan integrasi cuaca Open-Meteo.
                     </p>
                 </div>
                 <!-- Card 3 -->
@@ -94,9 +94,9 @@
                     <div class="w-12 h-12 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition">
                         🛡️
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-3">Lifecycle State Machine & RBAC</h3>
+                    <h3 class="text-xl font-bold text-white mb-3">State Machine & Isolasi Role (RBAC)</h3>
                     <p class="text-sm text-slate-400 leading-relaxed">
-                        Strict state transition guards (CREATED &rarr; BOOKED &rarr; PICKED_UP &rarr; IN_TRANSIT &rarr; DELIVERED) with multi-tenant isolation and append-only audit trails.
+                        Validasi transisi status berurutan (CREATED &rarr; BOOKED &rarr; PICKED_UP &rarr; IN_TRANSIT &rarr; DELIVERED) dengan pembatasan hak akses ketat antara Admin, Operator, dan Pelanggan.
                     </p>
                 </div>
             </div>
@@ -107,45 +107,45 @@
     <section id="demo-accounts" class="py-20 border-t border-slate-800/80">
         <div class="max-w-5xl mx-auto px-6">
             <div class="text-center mb-12">
-                <h2 class="text-xs uppercase tracking-widest text-blue-400 font-bold mb-3">Testing & Evaluation</h2>
-                <p class="text-3xl font-bold text-white tracking-tight">Pre-Seeded Demo Credentials</p>
-                <p class="text-sm text-slate-400 mt-2">Passwords are identical: <span class="font-mono text-cyan-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">password</span></p>
+                <h2 class="text-xs uppercase tracking-widest text-blue-400 font-bold mb-3">Pengujian & Evaluasi Dosen</h2>
+                <p class="text-3xl font-bold text-white tracking-tight">Kredensial Akun Demo Siap Pakai</p>
+                <p class="text-sm text-slate-400 mt-2">Seluruh password akun demo adalah: <span class="font-mono text-cyan-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">password</span></p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Admin Card -->
                 <div class="p-6 rounded-2xl bg-slate-900/90 border border-slate-800">
                     <div class="flex items-center justify-between mb-4">
                         <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-purple-500/10 text-purple-400 border border-purple-500/20">Administrator</span>
-                        <span class="text-xs text-slate-500">Full System Access</span>
+                        <span class="text-xs text-slate-500">Akses Penuh Sistem</span>
                     </div>
                     <p class="text-sm text-slate-300 font-medium mb-1">System Administrator</p>
                     <p class="text-xs font-mono text-cyan-400 mb-4 select-all">admin@cargotrace.com</p>
                     <a href="/app" class="block w-full py-2 text-center text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-white transition">
-                        Sign In as Admin
+                        Masuk sebagai Admin
                     </a>
                 </div>
                 <!-- Operator Card -->
                 <div class="p-6 rounded-2xl bg-slate-900/90 border border-slate-800">
                     <div class="flex items-center justify-between mb-4">
-                        <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20">Logistics Operator</span>
-                        <span class="text-xs text-slate-500">Ops Management</span>
+                        <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20">Operator Logistik</span>
+                        <span class="text-xs text-slate-500">Operasional Armada</span>
                     </div>
                     <p class="text-sm text-slate-300 font-medium mb-1">Operations Officer</p>
                     <p class="text-xs font-mono text-cyan-400 mb-4 select-all">operator@cargotrace.com</p>
                     <a href="/app" class="block w-full py-2 text-center text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-white transition">
-                        Sign In as Operator
+                        Masuk sebagai Operator
                     </a>
                 </div>
                 <!-- Customer Card -->
                 <div class="p-6 rounded-2xl bg-slate-900/90 border border-slate-800">
                     <div class="flex items-center justify-between mb-4">
-                        <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Customer</span>
-                        <span class="text-xs text-slate-500">Tenant Isolated</span>
+                        <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Pelanggan / Customer</span>
+                        <span class="text-xs text-slate-500">Tenant Terisolasi</span>
                     </div>
-                    <p class="text-sm text-slate-300 font-medium mb-1">PT Global Logistik</p>
+                    <p class="text-sm text-slate-300 font-medium mb-1">PT Global Logistik Nusantara</p>
                     <p class="text-xs font-mono text-cyan-400 mb-4 select-all">customer@cargotrace.com</p>
                     <a href="/app" class="block w-full py-2 text-center text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-white transition">
-                        Sign In as Customer
+                        Masuk sebagai Pelanggan
                     </a>
                 </div>
             </div>
@@ -154,7 +154,7 @@
 
     <!-- Footer -->
     <footer class="border-t border-slate-800/80 bg-slate-950 py-8 text-center text-xs text-slate-500">
-        <p>CargoTrace &copy; 2026. Web Programming 2 UAS Final Project. Built with Laravel 12 & Clean Service Architecture.</p>
+        <p>CargoTrace &copy; 2026. Proyek Akhir UAS Pemrograman Web 2. Dibangun dengan Arsitektur Service Layer Bersih.</p>
     </footer>
 </body>
 </html>

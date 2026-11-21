@@ -20,7 +20,7 @@ class TrackingEventController extends Controller
     }
 
     /**
-     * Riwayat timeline pelacakan kargo.
+     * Riwayat kronologis timeline pelacakan kargo.
      */
     public function index(Request $request, Shipment $shipment): JsonResponse
     {
@@ -29,7 +29,7 @@ class TrackingEventController extends Controller
         if ($user->isCustomer() && $shipment->customer_id !== $user->id) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized.',
+                'message' => 'Akses ditolak.',
             ], 403);
         }
 
@@ -42,7 +42,7 @@ class TrackingEventController extends Controller
     }
 
     /**
-     * Merekam milestone/event pelacakan baru.
+     * Merekam milestone/event pelacakan baru (Append-Only).
      */
     public function store(StoreTrackingEventRequest $request, Shipment $shipment): JsonResponse
     {
@@ -51,7 +51,7 @@ class TrackingEventController extends Controller
         if ($user->isCustomer()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Forbidden: Customers cannot record tracking events.',
+                'message' => 'Terlarang: Pelanggan tidak dapat menambahkan milestone pelacakan.',
             ], 403);
         }
 
@@ -60,7 +60,7 @@ class TrackingEventController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Tracking event recorded successfully.',
+                'message' => 'Milestone pelacakan berhasil dicatat.',
                 'data' => $event,
             ], 201);
         } catch (Exception $e) {

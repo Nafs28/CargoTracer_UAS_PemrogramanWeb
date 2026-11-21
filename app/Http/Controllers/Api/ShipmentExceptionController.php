@@ -30,13 +30,12 @@ class ShipmentExceptionController extends Controller
 
         if ($shipment) {
             if ($user->isCustomer() && $shipment->customer_id !== $user->id) {
-                return response()->json(['success' => false, 'message' => 'Unauthorized.'], 403);
+                return response()->json(['success' => false, 'message' => 'Akses ditolak.'], 403);
             }
             $exceptions = $shipment->exceptions()->with(['reporter'])->latest()->get();
         } else {
-            // All exceptions for operators/admins
             if ($user->isCustomer()) {
-                return response()->json(['success' => false, 'message' => 'Forbidden.'], 403);
+                return response()->json(['success' => false, 'message' => 'Akses terlarang.'], 403);
             }
             $exceptions = $this->exceptionService->getOpenExceptions();
         }
@@ -57,7 +56,7 @@ class ShipmentExceptionController extends Controller
         if ($user->isCustomer()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Forbidden: Customers cannot report exceptions directly.',
+                'message' => 'Terlarang: Pelanggan tidak dapat melaporkan kendala secara langsung.',
             ], 403);
         }
 
@@ -66,7 +65,7 @@ class ShipmentExceptionController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Shipment exception reported successfully.',
+                'message' => 'Laporan kendala operasional berhasil dibuat.',
                 'data' => $exception,
             ], 201);
         } catch (Exception $e) {
@@ -87,7 +86,7 @@ class ShipmentExceptionController extends Controller
         if ($user->isCustomer()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Forbidden.',
+                'message' => 'Akses terlarang.',
             ], 403);
         }
 
@@ -99,7 +98,7 @@ class ShipmentExceptionController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => "Exception status updated to {$updated->status}.",
+                'message' => "Status kendala diperbarui menjadi {$updated->status}.",
                 'data' => $updated,
             ], 200);
         } catch (Exception $e) {

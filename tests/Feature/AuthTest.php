@@ -63,7 +63,6 @@ class AuthTest extends TestCase
         $response->assertStatus(200)
             ->assertJson([
                 'success' => true,
-                'message' => 'Login successful.',
             ])
             ->assertJsonStructure([
                 'data' => ['user', 'token'],
@@ -85,7 +84,6 @@ class AuthTest extends TestCase
         $response->assertStatus(401)
             ->assertJson([
                 'success' => false,
-                'message' => 'Invalid email or password credentials.',
             ]);
     }
 

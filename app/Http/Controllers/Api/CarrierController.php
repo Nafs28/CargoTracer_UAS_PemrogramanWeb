@@ -35,7 +35,7 @@ class CarrierController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Carrier created successfully.',
+            'message' => 'Armada carrier berhasil didaftarkan.',
             'data' => $carrier,
         ], 201);
     }
@@ -56,7 +56,7 @@ class CarrierController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Carrier updated successfully.',
+            'message' => 'Data armada carrier berhasil diperbarui.',
             'data' => $carrier,
         ], 200);
     }
@@ -66,7 +66,7 @@ class CarrierController extends Controller
         if ($carrier->shipments()->exists()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Cannot delete carrier with active linked shipments.',
+                'message' => 'Tidak dapat menghapus armada yang memiliki pengiriman kargo aktif.',
             ], 422);
         }
 
@@ -76,7 +76,7 @@ class CarrierController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Carrier deleted successfully.',
+            'message' => 'Armada carrier berhasil dihapus.',
         ], 200);
     }
 }

@@ -57,7 +57,7 @@ class ShipmentController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => "Shipment {$shipment->shipment_number} created successfully.",
+                'message' => "Order kargo {$shipment->shipment_number} berhasil dibuat.",
                 'data' => $shipment,
             ], 201);
         } catch (Exception $e) {
@@ -75,11 +75,11 @@ class ShipmentController extends Controller
     {
         $user = $request->user();
 
-        // Tenant Isolation guard
+        // Isolasi tenant customer
         if ($user->isCustomer() && $shipment->customer_id !== $user->id) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized access to this shipment.',
+                'message' => 'Akses ditolak: Anda tidak memiliki wewenang atas data kargo ini.',
             ], 403);
         }
 
@@ -112,11 +112,10 @@ class ShipmentController extends Controller
     {
         $user = $request->user();
 
-        // Customer cannot update shipments
         if ($user->isCustomer()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Forbidden: Customers cannot edit shipment parameters.',
+                'message' => 'Terlarang: Pelanggan tidak memiliki izin mengubah data pengiriman.',
             ], 403);
         }
 
@@ -125,7 +124,7 @@ class ShipmentController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Shipment updated successfully.',
+                'message' => 'Data kargo berhasil diperbarui.',
                 'data' => $updated,
             ], 200);
         } catch (Exception $e) {
@@ -137,7 +136,7 @@ class ShipmentController extends Controller
     }
 
     /**
-     * Menghapus / Soft-delete kargo (Admin only).
+     * Menghapus / Soft-delete kargo (Khusus Admin).
      */
     public function destroy(Request $request, Shipment $shipment): JsonResponse
     {
@@ -146,7 +145,7 @@ class ShipmentController extends Controller
         if (!$user->isAdmin()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Forbidden: Only administrators can delete shipments.',
+                'message' => 'Terlarang: Hanya Administrator yang berhak menghapus kargo.',
             ], 403);
         }
 
@@ -154,12 +153,12 @@ class ShipmentController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => "Shipment {$shipment->shipment_number} deleted successfully.",
+            'message' => "Kargo {$shipment->shipment_number} berhasil dihapus.",
         ], 200);
     }
 
     /**
-     * Update status transisi via state machine.
+     * Transisi status via state machine.
      */
     public function updateStatus(UpdateStatusRequest $request, Shipment $shipment): JsonResponse
     {
@@ -168,7 +167,7 @@ class ShipmentController extends Controller
         if ($user->isCustomer()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Forbidden: Customers cannot transition shipment status.',
+                'message' => 'Terlarang: Pelanggan tidak berhak mengubah status kargo.',
             ], 403);
         }
 
@@ -177,7 +176,7 @@ class ShipmentController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => "Status transitioned to {$updated->current_status}.",
+                'message' => "Status kargo berhasil diubah menjadi {$updated->current_status}.",
                 'data' => $updated,
             ], 200);
         } catch (Exception $e) {
@@ -189,7 +188,7 @@ class ShipmentController extends Controller
     }
 
     /**
-     * Visual data points for Leaflet.js GIS Mapping.
+     * Data koordinat titik rute untuk Peta GIS Leaflet.js.
      */
     public function map(Request $request, Shipment $shipment): JsonResponse
     {
@@ -198,7 +197,7 @@ class ShipmentController extends Controller
         if ($user->isCustomer() && $shipment->customer_id !== $user->id) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized access to map data.',
+                'message' => 'Akses ditolak: Data peta kargo tidak tersedia.',
             ], 403);
         }
 

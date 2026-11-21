@@ -35,7 +35,7 @@ class LocationController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Location created successfully.',
+            'message' => 'Pelabuhan / hub logistik berhasil ditambahkan.',
             'data' => $location,
         ], 201);
     }
@@ -56,7 +56,7 @@ class LocationController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Location updated successfully.',
+            'message' => 'Data pelabuhan / hub berhasil diperbarui.',
             'data' => $location,
         ], 200);
     }
@@ -66,7 +66,7 @@ class LocationController extends Controller
         if ($location->shipmentsAsOrigin()->exists() || $location->shipmentsAsDestination()->exists()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Cannot delete location that is referenced in existing shipments.',
+                'message' => 'Tidak dapat menghapus lokasi yang tercatat pada pengiriman kargo aktif.',
             ], 422);
         }
 
@@ -76,7 +76,7 @@ class LocationController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Location deleted successfully.',
+            'message' => 'Lokasi pelabuhan berhasil dihapus.',
         ], 200);
     }
 }

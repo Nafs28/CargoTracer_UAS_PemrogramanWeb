@@ -21,7 +21,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Pendaftaran akun baru (Public).
+     * Pendaftaran akun baru (Publik).
      */
     public function register(RegisterRequest $request): JsonResponse
     {
@@ -39,7 +39,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Registration successful.',
+            'message' => 'Pendaftaran akun berhasil.',
             'data' => [
                 'user' => $user,
                 'token' => $token,
@@ -49,7 +49,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Mendapatkan token autentikasi (Sanctum) (Public).
+     * Mendapatkan token autentikasi (Sanctum) (Publik).
      */
     public function login(LoginRequest $request): JsonResponse
     {
@@ -58,11 +58,10 @@ class AuthController extends Controller
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid email or password credentials.',
+                'message' => 'Alamat email atau kata sandi yang Anda masukkan salah.',
             ], 401);
         }
 
-        // Revoke older tokens for clean session
         $user->tokens()->delete();
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -70,7 +69,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Login successful.',
+            'message' => 'Berhasil masuk ke sistem.',
             'data' => [
                 'user' => $user,
                 'token' => $token,
@@ -80,7 +79,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Revoke token autentikasi.
+     * Revoke token autentikasi (Keluar).
      */
     public function logout(Request $request): JsonResponse
     {
@@ -92,7 +91,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Successfully logged out.',
+            'message' => 'Berhasil keluar dari akun.',
         ], 200);
     }
 

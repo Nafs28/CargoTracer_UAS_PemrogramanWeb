@@ -21,14 +21,14 @@ class RoleMiddleware
         if (!$user) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthenticated access.',
+                'message' => 'Akses ditolak: Anda belum terautentikasi.',
             ], 401);
         }
 
         if (!in_array($user->role, $roles)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Access forbidden: Insufficient permissions for role [' . $user->role . ']. Required: ' . implode(', ', $roles),
+                'message' => 'Akses terlarang (403): Peran pengguna [' . $user->role . '] tidak memiliki wewenang. Diperlukan peran: ' . implode(', ', $roles),
             ], 403);
         }
 
