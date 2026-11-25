@@ -48,6 +48,7 @@ class Shipment extends Model
         'is_delayed',
         'delay_hours',
         'delay_severity',
+        'delay_reason',
     ];
 
     protected function casts(): array

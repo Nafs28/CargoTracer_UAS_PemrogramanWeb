@@ -6,9 +6,11 @@ use App\Http\Controllers\Api\CarrierController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\GeocodingController;
 use App\Http\Controllers\Api\LocationController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ShipmentController;
 use App\Http\Controllers\Api\ShipmentExceptionController;
 use App\Http\Controllers\Api\TrackingEventController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -45,6 +47,8 @@ Route::middleware('auth:sanctum')->group(function () {
         ->middleware('role:admin');
     Route::patch('/shipments/{shipment}/status', [ShipmentController::class, 'updateStatus'])
         ->middleware('role:admin,operator');
+    Route::post('/shipments/{shipment}/override-status', [ShipmentController::class, 'overrideStatus'])
+        ->middleware('role:admin');
     Route::get('/shipments/{shipment}/map', [ShipmentController::class, 'map']);
 
     // Tracking Events (Append-Only History)
@@ -80,6 +84,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/reverse-geocode', [GeocodingController::class, 'reverseGeocode']);
     Route::get('/weather', [GeocodingController::class, 'weather']);
 
-    // Audit Logs (Admin only)
-    Route::get('/audit-logs', [AuditLogController::class, 'index'])->middleware('role:admin');
+    // Notifications (In-App)
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::patch('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
+    Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markAsRead']);
+
+    // Users Management & Audit Logs (Admin only)
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/users', [UserController::class, 'index']);
+        Route::post('/users', [UserController::class, 'store']);
+        Route::match(['put', 'patch'], '/users/{user}', [UserController::class, 'update']);
+        Route::delete('/users/{user}', [UserController::class, 'destroy']);
+        Route::get('/audit-logs', [AuditLogController::class, 'index']);
+    });
 });

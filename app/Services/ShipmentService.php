@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Shipment;
+use App\Models\ShipmentNotification;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -141,7 +142,50 @@ class ShipmentService
             // Auto-recalculate delay on status changes
             $this->etaService->updateShipmentDelay($shipment);
 
+            // In-app notification for customer
+            if ($shipment->customer_id) {
+                ShipmentNotification::create([
+                    'user_id' => $shipment->customer_id,
+                    'shipment_id' => $shipment->id,
+                    'title' => "Status Updated: {$shipment->shipment_number}",
+                    'message' => "Shipment status changed from {$currentStatus} to {$newStatus}.",
+                    'type' => 'STATUS_UPDATE',
+                ]);
+            }
+
             $this->auditService->log($user, 'TRANSITION_STATUS', $shipment, $oldValues, ['current_status' => $newStatus]);
+
+            return $shipment->fresh();
+        });
+    }
+
+    /**
+     * Special Administrator override for terminal status (logged in audit_logs).
+     */
+    public function overrideStatus(Shipment $shipment, string $newStatus, string $reason, User $admin): Shipment
+    {
+        if (!$admin->isAdmin()) {
+            throw new InvalidArgumentException('Only Administrator can perform a status override.');
+        }
+
+        $newStatus = strtoupper($newStatus);
+        if (!in_array($newStatus, Shipment::STATUSES)) {
+            throw new InvalidArgumentException("Unknown shipment status: {$newStatus}");
+        }
+
+        return DB::transaction(function () use ($shipment, $newStatus, $reason, $admin) {
+            $oldStatus = $shipment->current_status;
+            $shipment->current_status = $newStatus;
+            $shipment->save();
+
+            $this->etaService->updateShipmentDelay($shipment);
+
+            $this->auditService->log($admin, 'ADMIN_OVERRIDE', $shipment, [
+                'current_status' => $oldStatus,
+            ], [
+                'current_status' => $newStatus,
+                'reason' => $reason,
+            ]);
 
             return $shipment->fresh();
         });
@@ -191,13 +235,19 @@ class ShipmentService
             $query->where('current_status', strtoupper($filters['status']));
         }
 
-        // Filter carrier
+        // Filter carrier, origin, destination
         if (!empty($filters['carrier_id'])) {
             $query->where('carrier_id', $filters['carrier_id']);
         }
+        if (!empty($filters['origin_id'])) {
+            $query->where('origin_id', $filters['origin_id']);
+        }
+        if (!empty($filters['destination_id'])) {
+            $query->where('destination_id', $filters['destination_id']);
+        }
 
         // Filter is_delayed
-        if (isset($filters['is_delayed'])) {
+        if (isset($filters['is_delayed']) && $filters['is_delayed'] !== '') {
             $query->where('is_delayed', filter_var($filters['is_delayed'], FILTER_VALIDATE_BOOLEAN));
         }
 
@@ -209,6 +259,11 @@ class ShipmentService
             $query->whereDate('expected_arrival', '<=', $filters['date_to']);
         }
 
-        return $query->latest()->paginate($perPage);
+        // Sorting (whitelist columns to prevent SQL injection)
+        $allowedSort = ['created_at', 'shipment_number', 'expected_departure', 'expected_arrival', 'current_status', 'delay_hours'];
+        $sortBy = in_array($filters['sort_by'] ?? '', $allowedSort) ? $filters['sort_by'] : 'created_at';
+        $sortDir = strtolower($filters['sort_dir'] ?? 'desc') === 'asc' ? 'asc' : 'desc';
+
+        return $query->orderBy($sortBy, $sortDir)->paginate($perPage);
     }
 }

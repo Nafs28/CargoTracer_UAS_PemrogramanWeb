@@ -89,13 +89,11 @@ class DashboardService
      */
     public function getShipmentsByCarrier(?User $user = null): array
     {
-        $query = Carrier::withCount(['shipments' => function ($q) use ($user) {
+        $carriers = Carrier::withCount(['shipments' => function ($q) use ($user) {
             if ($user && $user->isCustomer()) {
                 $q->where('customer_id', $user->id);
             }
-        }])->having('shipments_count', '>', 0);
-
-        $carriers = $query->get();
+        }])->get()->filter(fn ($carrier) => $carrier->shipments_count > 0)->values();
 
         return [
             'labels' => $carriers->pluck('name')->toArray(),
