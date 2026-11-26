@@ -74,6 +74,10 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Port of Los Angeles', 'code' => 'USLAX', 'type' => 'port', 'city' => 'Los Angeles', 'country' => 'United States', 'latitude' => 33.7432, 'longitude' => -118.2673, 'address' => 'San Pedro Bay, Los Angeles'],
             ['name' => 'Jebel Ali Port', 'code' => 'AEJEA', 'type' => 'port', 'city' => 'Dubai', 'country' => 'United Arab Emirates', 'latitude' => 25.0113, 'longitude' => 55.0617, 'address' => 'Jebel Ali Free Zone, Dubai'],
             ['name' => 'Port of Busan', 'code' => 'KRPUS', 'type' => 'port', 'city' => 'Busan', 'country' => 'South Korea', 'latitude' => 35.1028, 'longitude' => 129.0403, 'address' => 'Jung-gu, Busan'],
+            ['name' => 'Pelabuhan Belawan', 'code' => 'IDBLW', 'type' => 'port', 'city' => 'Medan', 'country' => 'Indonesia', 'latitude' => 3.7892, 'longitude' => 98.7150, 'address' => 'Bagan Deli, Medan Belawan, Sumatera Utara'],
+            ['name' => 'Pelabuhan Makassar (Soekarno-Hatta)', 'code' => 'IDMAK', 'type' => 'port', 'city' => 'Makassar', 'country' => 'Indonesia', 'latitude' => -5.1195, 'longitude' => 119.4090, 'address' => 'Jl. Soekarno, Wajo, Makassar, Sulawesi Selatan'],
+            ['name' => 'Pelabuhan Tanjung Emas', 'code' => 'IDSRG', 'type' => 'port', 'city' => 'Semarang', 'country' => 'Indonesia', 'latitude' => -6.9465, 'longitude' => 110.4283, 'address' => 'Tanjung Mas, Semarang Utara, Jawa Tengah'],
+            ['name' => 'Pelabuhan Bitung', 'code' => 'IDBIT', 'type' => 'port', 'city' => 'Bitung', 'country' => 'Indonesia', 'latitude' => 1.4402, 'longitude' => 125.1915, 'address' => 'Bitung Timur, Maesa, Bitung, Sulawesi Utara'],
         ];
 
         $locModels = [];

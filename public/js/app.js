@@ -128,7 +128,6 @@ window.renderAuthenticatedState = function () {
     const user = window.appState.user;
     document.getElementById('user-name').textContent = user.name;
     document.getElementById('user-role-badge').textContent = user.role;
-    document.getElementById('user-avatar').textContent = user.name.substring(0, 2).toUpperCase();
 
     const isAdmin = user.role === 'admin';
     const isOps = user.role === 'admin' || user.role === 'operator';

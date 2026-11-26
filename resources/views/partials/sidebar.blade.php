@@ -24,16 +24,11 @@
         </div>
 
         <!-- Profil Role Pengguna -->
-        <div class="p-3.5 mx-3 my-4 rounded-lg bg-[#F9F8F6] border border-[#E2DFD7] flex items-center gap-3">
-            <div id="user-avatar" class="w-9 h-9 rounded-md bg-[#E7E4DC] border border-[#E2DFD7] flex items-center justify-center font-bold text-[#1C1917] text-xs">
-                AD
-            </div>
-            <div class="overflow-hidden">
-                <p id="user-name" class="text-xs font-semibold text-[#1C1917] truncate">Administrator</p>
-                <span id="user-role-badge" class="inline-block text-[10px] font-semibold uppercase tracking-wider text-[#C2410C]">
-                    admin
-                </span>
-            </div>
+        <div class="p-3.5 mx-3 my-4 rounded-lg bg-[#F9F8F6] border border-[#E2DFD7]">
+            <p id="user-name" class="text-xs font-semibold text-[#1C1917] truncate">Administrator</p>
+            <span id="user-role-badge" class="inline-block text-[10px] font-semibold uppercase tracking-wider text-[#C2410C]">
+                admin
+            </span>
         </div>
 
         <!-- Menu Navigasi -->
