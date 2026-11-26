@@ -48,7 +48,6 @@
 
         <!-- Pintasan Akun Demo -->
         <div class="mt-6 pt-5 border-t border-[#E2DFD7]">
-            <span class="text-xs text-[#78716C] block mb-2.5">Pintasan akun demo (kata sandi: <code class="text-[#1C1917]">password</code>):</span>
             <div class="grid grid-cols-3 gap-2">
                 <button type="button" onclick="window.fillDemo('admin@cargotrace.com')" class="px-2 py-1.5 text-xs font-semibold rounded-md bg-[#F9F8F6] text-[#1C1917] border border-[#E2DFD7] hover:bg-[#E7E4DC] transition">Admin</button>
                 <button type="button" onclick="window.fillDemo('operator@cargotrace.com')" class="px-2 py-1.5 text-xs font-semibold rounded-md bg-[#F9F8F6] text-[#1C1917] border border-[#E2DFD7] hover:bg-[#E7E4DC] transition">Operator</button>
@@ -57,7 +56,7 @@
         </div>
 
         <div class="mt-5 text-center">
-            <a href="/" class="text-xs text-[#57534E] hover:text-[#C2410C] transition">← Kembali ke Halaman Utama</a>
+            <a href="/" class="text-xs text-[#57534E] hover:text-[#C2410C] transition">Kembali ke Halaman Utama</a>
         </div>
     </div>
 </div>

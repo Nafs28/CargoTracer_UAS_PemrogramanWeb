@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\CarrierController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\GeocodingController;
 use App\Http\Controllers\Api\LocationController;
+use App\Http\Controllers\Api\MarketNewsController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ShipmentController;
 use App\Http\Controllers\Api\ShipmentExceptionController;
@@ -79,10 +80,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::match(['put', 'patch'], '/locations/{location}', [LocationController::class, 'update'])->middleware('role:admin');
     Route::delete('/locations/{location}', [LocationController::class, 'destroy'])->middleware('role:admin');
 
-    // Resilient GIS & Weather External API Integrations
+    // Resilient GIS, Weather & Global Market News External API Integrations
     Route::get('/geocode', [GeocodingController::class, 'geocode']);
     Route::get('/reverse-geocode', [GeocodingController::class, 'reverseGeocode']);
     Route::get('/weather', [GeocodingController::class, 'weather']);
+    Route::get('/market-news', [MarketNewsController::class, 'index']);
 
     // Notifications (In-App)
     Route::get('/notifications', [NotificationController::class, 'index']);

@@ -53,6 +53,7 @@
             @include('partials.views.shipments')
             @include('partials.views.map')
             @include('partials.views.exceptions')
+            @include('partials.views.news')
             @include('partials.views.carriers')
             @include('partials.views.locations')
             @include('partials.views.users')
@@ -69,6 +70,7 @@
     <script src="{{ asset('js/shipments.js') }}"></script>
     <script src="{{ asset('js/map.js') }}"></script>
     <script src="{{ asset('js/admin.js') }}"></script>
+    <script src="{{ asset('js/news.js') }}"></script>
     <script src="{{ asset('js/app.js') }}"></script>
 </body>
 </html>

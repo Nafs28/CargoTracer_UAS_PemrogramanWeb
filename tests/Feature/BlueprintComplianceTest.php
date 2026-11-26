@@ -9,6 +9,7 @@ use App\Models\Shipment;
 use App\Models\User;
 use App\Services\EtaService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -118,5 +119,25 @@ class BlueprintComplianceTest extends TestCase
         ])->assertStatus(201);
 
         $this->assertDatabaseHas('users', ['email' => 'newop@cargotrace.com', 'role' => 'operator']);
+    }
+
+    public function test_market_news_endpoint_parses_rss_and_handles_fallback(): void
+    {
+        $user = User::factory()->create(['role' => 'customer']);
+        Sanctum::actingAs($user);
+
+        Http::fake([
+            '*' => Http::response(
+                '<rss><channel><item><title>Global Trade Surges - Reuters</title><link>https://example.com/1</link><pubDate>Thu, 26 Nov 2026 10:00:00 GMT</pubDate><source>Reuters</source></item></channel></rss>',
+                200
+            ),
+        ]);
+
+        $this->getJson('/api/market-news?topic=global_market')
+            ->assertStatus(200)
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data.is_fallback', false)
+            ->assertJsonPath('data.articles.0.title', 'Global Trade Surges')
+            ->assertJsonPath('data.articles.0.source', 'Reuters');
     }
 }

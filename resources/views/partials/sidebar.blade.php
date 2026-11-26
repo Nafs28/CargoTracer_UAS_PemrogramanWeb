@@ -45,6 +45,9 @@
             <button onclick="window.navigateTo('exceptions-view')" id="nav-exceptions" class="nav-item w-full flex items-center px-3 py-2 text-xs font-semibold rounded-lg text-[#57534E] hover:text-[#1C1917] hover:bg-[#E7E4DC] transition text-left">
                 Eskalasi Kendala
             </button>
+            <button onclick="window.navigateTo('news-view')" id="nav-news" class="nav-item w-full flex items-center px-3 py-2 text-xs font-semibold rounded-lg text-[#57534E] hover:text-[#1C1917] hover:bg-[#E7E4DC] transition text-left">
+                Berita Pasar Global
+            </button>
 
             <!-- Navigasi Khusus Administrator -->
             <div id="admin-nav-group" class="pt-4 mt-4 border-t border-[#E2DFD7] space-y-1">

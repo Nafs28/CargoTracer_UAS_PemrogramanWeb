@@ -44,4 +44,5 @@ return [
 
     'geocoding_api_url' => env('GEOCODING_API_URL', 'https://nominatim.openstreetmap.org'),
     'weather_api_url' => env('WEATHER_API_URL', 'https://api.open-meteo.com/v1'),
+    'market_news_api_url' => env('MARKET_NEWS_API_URL', 'https://news.google.com/rss/search'),
 ];
