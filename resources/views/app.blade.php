@@ -34,6 +34,11 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: #F0EEE9; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #D6D3CB; border-radius: 3px; }
         .leaflet-container { z-index: 10 !important; border-radius: 0.5rem; }
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .view-animate { animation: fadeSlideIn 0.28s cubic-bezier(0.22, 1, 0.36, 1); }
     </style>
 </head>
 <body class="h-full bg-[#F9F8F6] text-[#1C1917] antialiased flex flex-col selection:bg-[#C2410C] selection:text-white">

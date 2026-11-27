@@ -2,8 +2,8 @@
     <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-[#E2DFD7]">
         <div>
             <p class="text-xs font-semibold uppercase tracking-widest text-[#C2410C]">Ringkasan Operasional</p>
-            <h2 class="font-serif-editorial text-3xl sm:text-4xl font-semibold text-[#1C1917] mt-1">Dasbor Eksekutif</h2>
-            <p class="text-sm text-[#57534E] mt-1">Telemetri pengiriman dan kepatuhan jadwal SLA secara langsung.</p>
+            <h2 class="font-serif-editorial text-3xl sm:text-4xl font-semibold text-[#1C1917] mt-1">Dasbor Utama</h2>
+            <p class="text-sm text-[#44403C] mt-1">Ringkasan jumlah pengiriman, ketepatan jadwal, dan kendala yang perlu ditangani.</p>
         </div>
         <div class="flex gap-2">
             <button onclick="window.loadDashboardData()" class="px-3.5 py-2 rounded-lg bg-[#F0EEE9] border border-[#E2DFD7] hover:bg-[#E7E4DC] text-xs font-semibold text-[#1C1917] transition">

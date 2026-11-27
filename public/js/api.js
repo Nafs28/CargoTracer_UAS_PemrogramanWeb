@@ -65,16 +65,27 @@ window.toast = function (message, type = 'info') {
 };
 
 window.statusBadge = function (status) {
+    const labels = {
+        CREATED: 'Order Baru',
+        BOOKED: 'Terjadwal',
+        PICKED_UP: 'Diambil Kurir',
+        IN_TRANSIT: 'Dalam Perjalanan',
+        DELIVERED: 'Sudah Diterima',
+        CANCELLED: 'Dibatalkan',
+        PORT_ARRIVAL: 'Tiba di Pelabuhan',
+        CUSTOMS_CLEARANCE: 'Bea Cukai',
+    };
     const map = {
-        CREATED: 'bg-[#E7E4DC] text-[#57534E] border-[#D6D3CB]',
+        CREATED: 'bg-[#E7E4DC] text-[#1C1917] border-[#D6D3CB]',
         BOOKED: 'bg-[#F0EEE9] text-[#1C1917] border-[#D6D3CB]',
         PICKED_UP: 'bg-[#FEF3C7] text-[#92400E] border-[#FDE68A]',
         IN_TRANSIT: 'bg-[#FFEDD5] text-[#C2410C] border-[#FDBA74]',
         DELIVERED: 'bg-[#DCFCE7] text-[#166534] border-[#BBF7D0]',
         CANCELLED: 'bg-[#FEE2E2] text-[#991B1B] border-[#FECACA]',
     };
-    const cls = map[status] || 'bg-[#E7E4DC] text-[#57534E] border-[#D6D3CB]';
-    return `<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${cls}">${status}</span>`;
+    const cls = map[status] || 'bg-[#E7E4DC] text-[#1C1917] border-[#D6D3CB]';
+    const text = labels[status] ? `${labels[status]} (${status})` : status;
+    return `<span class="px-2.5 py-0.5 rounded text-[11px] font-semibold border ${cls}">${text}</span>`;
 };
 
 window.severityBadge = function (severity) {

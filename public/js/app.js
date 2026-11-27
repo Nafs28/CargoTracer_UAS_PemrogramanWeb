@@ -90,7 +90,16 @@ window.navigateTo = function (viewId) {
     };
 
     Object.entries(viewNavPairs).forEach(([vId, navId]) => {
-        document.getElementById(vId)?.classList.toggle('hidden', vId !== viewId);
+        const viewEl = document.getElementById(vId);
+        if (viewEl) {
+            const isTarget = vId === viewId;
+            viewEl.classList.toggle('hidden', !isTarget);
+            if (isTarget) {
+                viewEl.classList.remove('view-animate');
+                void viewEl.offsetWidth;
+                viewEl.classList.add('view-animate');
+            }
+        }
         const btn = document.getElementById(navId);
         if (btn) {
             btn.className = vId === viewId

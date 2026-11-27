@@ -3,7 +3,7 @@
         <div>
             <p class="text-xs font-semibold uppercase tracking-widest text-[#C2410C]">Manajemen Pengiriman</p>
             <h2 class="font-serif-editorial text-3xl sm:text-4xl font-semibold text-[#1C1917] mt-1">Direktori Kargo</h2>
-            <p class="text-sm text-[#57534E] mt-1">Pencarian multi-parameter, filter rute, sorting, dan metrik keterlambatan.</p>
+            <p class="text-sm text-[#44403C] mt-1">Cari pengiriman berdasarkan nomor kargo, status, pelabuhan asal, atau keterlambatan.</p>
         </div>
         <button onclick="window.openNewShipmentModal()" class="px-4 py-2.5 rounded-lg bg-[#C2410C] hover:bg-[#9A3412] text-xs font-semibold text-white transition self-start">
             + Tambah Kargo Baru
