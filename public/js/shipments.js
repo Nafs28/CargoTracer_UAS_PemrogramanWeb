@@ -48,7 +48,7 @@ window.loadShipments = async function (page = 1) {
                     <td class="py-3.5 px-4 whitespace-nowrap">${window.statusBadge(s.current_status)}</td>
                     <td class="py-3.5 px-4 whitespace-nowrap">
                         ${s.is_delayed
-                            ? `<span class="text-[#C2410C] font-semibold">Terlambat ${s.delay_hours}j</span>`
+                            ? `<span class="text-[#C2410C] font-semibold">Terlambat ${Math.round(parseFloat(s.delay_hours) || 0)} Jam</span>`
                             : '<span class="text-[#166534] font-medium">Tepat Waktu</span>'}
                     </td>
                     <td class="py-3.5 px-4 whitespace-nowrap">
