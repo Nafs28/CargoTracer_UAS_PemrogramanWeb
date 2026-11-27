@@ -26,28 +26,28 @@ class DatabaseSeeder extends Seeder
             'name' => 'System Administrator',
             'password' => Hash::make('password'),
             'role' => 'admin',
-            'phone' => '+628110000001',
+            'phone' => '08110000001',
         ]);
 
         $operator = User::firstOrCreate(['email' => 'operator@cargotrace.com'], [
             'name' => 'Operations Officer',
             'password' => Hash::make('password'),
             'role' => 'operator',
-            'phone' => '+628110000002',
+            'phone' => '08110000002',
         ]);
 
         $customer = User::firstOrCreate(['email' => 'customer@cargotrace.com'], [
             'name' => 'PT Global Logistik Nusantara',
             'password' => Hash::make('password'),
             'role' => 'customer',
-            'phone' => '+628110000003',
+            'phone' => '08110000003',
         ]);
 
         $customer2 = User::firstOrCreate(['email' => 'client@pacifictrade.com'], [
             'name' => 'Pacific Ocean Trade Ltd',
             'password' => Hash::make('password'),
             'role' => 'customer',
-            'phone' => '+628110000004',
+            'phone' => '08110000004',
         ]);
 
         // 2. Carriers Master Data

@@ -202,7 +202,7 @@ window.loadUsers = async function () {
                 <td class="py-3 px-4 font-semibold text-[#1C1917]">${u.name}</td>
                 <td class="py-3 px-4 text-[#57534E]">${u.email}</td>
                 <td class="py-3 px-4 uppercase text-[10px] font-bold text-[#C2410C]">${u.role}</td>
-                <td class="py-3 px-4 text-[#78716C]">${u.phone || '-'}</td>
+                <td class="py-3 px-4 text-[#78716C] font-mono">${u.phone ? u.phone.replace(/^\+?62/, '0') : '-'}</td>
                 <td class="py-3 px-4 text-right">
                     <button onclick="window.deleteUser(${u.id}, '${u.name.replace(/'/g, "\\'")}')" class="text-[#C2410C] hover:underline text-xs font-semibold">Hapus</button>
                 </td>
