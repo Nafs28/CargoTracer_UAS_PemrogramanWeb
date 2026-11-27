@@ -54,16 +54,20 @@ window.loadDashboardData = async function () {
             return;
         }
 
-        tbody.innerHTML = activities.map((evt) => `
+        tbody.innerHTML = activities.map((evt) => {
+            const locText = evt.location
+                ? evt.location.name
+                : (evt.latitude ? `${parseFloat(evt.latitude).toFixed(4)}, ${parseFloat(evt.longitude).toFixed(4)}` : '-');
+            return `
             <tr class="hover:bg-[#E7E4DC]/50 transition">
-                <td class="py-3 px-4 text-[#57534E] font-mono">${new Date(evt.event_time).toLocaleString('id-ID')}</td>
-                <td class="py-3 px-4 font-mono font-semibold text-[#C2410C]">${evt.shipment ? evt.shipment.shipment_number : '-'}</td>
-                <td class="py-3 px-4">${window.statusBadge(evt.status_type)}</td>
-                <td class="py-3 px-4 text-[#1C1917]">${evt.location ? evt.location.name : (evt.latitude ? `${evt.latitude}, ${evt.longitude}` : '-')}</td>
-                <td class="py-3 px-4 text-[#57534E]">${evt.description}</td>
-                <td class="py-3 px-4 text-[#57534E]">${evt.creator ? evt.creator.name : '-'}</td>
-            </tr>
-        `).join('');
+                <td class="py-3.5 px-4 text-[#57534E] font-mono whitespace-nowrap align-middle">${new Date(evt.event_time).toLocaleString('id-ID')}</td>
+                <td class="py-3.5 px-4 font-mono font-semibold text-[#C2410C] whitespace-nowrap align-middle">${evt.shipment ? evt.shipment.shipment_number : '-'}</td>
+                <td class="py-3.5 px-4 whitespace-nowrap align-middle">${window.statusBadge(evt.status_type)}</td>
+                <td class="py-3.5 px-4 text-[#1C1917] whitespace-nowrap align-middle">${locText}</td>
+                <td class="py-3.5 px-4 text-[#57534E] align-middle min-w-[220px]">${evt.description}</td>
+                <td class="py-3.5 px-4 text-[#57534E] whitespace-nowrap align-middle">${evt.creator ? evt.creator.name : '-'}</td>
+            </tr>`;
+        }).join('');
     } catch (err) {
         window.toast(err.message, 'error');
     }

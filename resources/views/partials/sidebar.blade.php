@@ -51,7 +51,7 @@
 
             <!-- Navigasi Khusus Administrator -->
             <div id="admin-nav-group" class="pt-4 mt-4 border-t border-[#E2DFD7] space-y-1">
-                <span class="px-3 text-[10px] uppercase tracking-wider text-[#78716C] font-semibold block mb-1">Master Data &amp; Admin</span>
+                <span class="px-3 text-[10px] uppercase tracking-wider text-[#C2410C] font-bold block mb-1">Master Data &amp; Admin</span>
                 <button onclick="window.navigateTo('carriers-view')" id="nav-carriers" class="nav-item w-full flex items-center px-3 py-2 text-xs font-semibold rounded-lg text-[#57534E] hover:text-[#1C1917] hover:bg-[#E7E4DC] transition text-left">
                     Armada Carrier
                 </button>

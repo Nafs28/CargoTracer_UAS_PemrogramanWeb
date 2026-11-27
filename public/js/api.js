@@ -84,8 +84,8 @@ window.statusBadge = function (status) {
         CANCELLED: 'bg-[#FEE2E2] text-[#991B1B] border-[#FECACA]',
     };
     const cls = map[status] || 'bg-[#E7E4DC] text-[#1C1917] border-[#D6D3CB]';
-    const text = labels[status] ? `${labels[status]} (${status})` : status;
-    return `<span class="px-2.5 py-0.5 rounded text-[11px] font-semibold border ${cls}">${text}</span>`;
+    const text = labels[status] || status;
+    return `<span title="${status}" class="inline-flex items-center whitespace-nowrap px-2.5 py-1 rounded-md text-[11px] font-semibold border ${cls}">${text}</span>`;
 };
 
 window.severityBadge = function (severity) {
@@ -95,7 +95,7 @@ window.severityBadge = function (severity) {
         HIGH: 'bg-[#FEE2E2] text-[#991B1B] border-[#FECACA]',
     };
     const cls = map[severity] || 'bg-[#E7E4DC] text-[#57534E] border-[#D6D3CB]';
-    return `<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${cls}">${severity || '-'}</span>`;
+    return `<span class="inline-flex items-center whitespace-nowrap px-2 py-0.5 rounded-md text-[10px] font-bold uppercase border ${cls}">${severity || '-'}</span>`;
 };
 
 window.loadMasterReferences = async function () {
