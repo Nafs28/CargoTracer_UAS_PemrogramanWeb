@@ -140,7 +140,7 @@ class DashboardService
      */
     public function getRecentActivity(int $limit = 10, ?User $user = null)
     {
-        $query = TrackingEvent::with(['shipment.carrier', 'location', 'creator'])
+        $query = TrackingEvent::with(['shipment.carrier', 'shipment.origin', 'shipment.destination', 'location', 'creator'])
             ->whereHas('shipment')
             ->latest('event_time');
 

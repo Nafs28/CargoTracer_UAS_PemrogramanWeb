@@ -55,15 +55,25 @@ window.loadDashboardData = async function () {
         }
 
         tbody.innerHTML = activities.map((evt) => {
-            const locText = evt.location
-                ? evt.location.name
-                : (evt.latitude ? `${parseFloat(evt.latitude).toFixed(4)}, ${parseFloat(evt.longitude).toFixed(4)}` : '-');
+            const lat = evt.latitude ?? evt.location?.latitude;
+            const lng = evt.longitude ?? evt.location?.longitude;
+            const coordsText = (lat !== null && lat !== undefined && lng !== null && lng !== undefined)
+                ? `${parseFloat(lat).toFixed(4)}, ${parseFloat(lng).toFixed(4)}`
+                : 'Koordinat tidak tersedia';
+            const routeFallback = (evt.shipment?.origin?.code && evt.shipment?.destination?.code)
+                ? `Koridor Maritim (${evt.shipment.origin.code} → ${evt.shipment.destination.code})`
+                : 'Titik Transit Maritim';
+            const locName = evt.location ? evt.location.name : routeFallback;
+
             return `
             <tr class="hover:bg-[#E7E4DC]/50 transition">
                 <td class="py-3.5 px-4 text-[#57534E] font-mono whitespace-nowrap align-middle">${new Date(evt.event_time).toLocaleString('id-ID')}</td>
                 <td class="py-3.5 px-4 font-mono font-semibold text-[#C2410C] whitespace-nowrap align-middle">${evt.shipment ? evt.shipment.shipment_number : '-'}</td>
                 <td class="py-3.5 px-4 whitespace-nowrap align-middle">${window.statusBadge(evt.status_type)}</td>
-                <td class="py-3.5 px-4 text-[#1C1917] whitespace-nowrap align-middle">${locText}</td>
+                <td class="py-3.5 px-4 whitespace-nowrap align-middle">
+                    <div class="font-medium text-[#1C1917]">${locName}</div>
+                    <div class="text-[11px] font-mono text-[#78716C]">${coordsText}</div>
+                </td>
                 <td class="py-3.5 px-4 text-[#57534E] align-middle min-w-[220px]">${evt.description}</td>
                 <td class="py-3.5 px-4 text-[#57534E] whitespace-nowrap align-middle">${evt.creator ? evt.creator.name : '-'}</td>
             </tr>`;

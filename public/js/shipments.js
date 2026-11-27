@@ -141,7 +141,7 @@ window.openShipmentDetail = async function (id) {
                             <span class="text-[10px] font-mono text-[#78716C]">${new Date(e.event_time).toLocaleString('id-ID')}</span>
                         </div>
                         <p class="text-xs text-[#1C1917] font-medium">${e.description}</p>
-                        <span class="text-[10px] text-[#57534E]">${e.location?.name || (e.latitude ? `${e.latitude}, ${e.longitude}` : '-')} • Oleh: ${e.creator?.name || '-'}</span>
+                        <span class="text-[10px] text-[#57534E]">${e.location?.name || 'Titik Transit Maritim'} (${e.latitude ? `${parseFloat(e.latitude).toFixed(4)}, ${parseFloat(e.longitude).toFixed(4)}` : '-'}) • Oleh: ${e.creator?.name || '-'}</span>
                     </div>
                 </div>
             `).join('')
