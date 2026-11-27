@@ -38,20 +38,25 @@ window.loadShipments = async function (page = 1) {
         const rows = res.data || [];
 
         if (!rows.length) {
-            tbody.innerHTML = '<tr><td colspan="6" class="py-8 text-center text-[#78716C]">Tidak ada kargo yang sesuai filter.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" class="py-8 text-center text-[#78716C]">Tidak ada kargo yang sesuai filter.</td></tr>';
         } else {
             tbody.innerHTML = rows.map((s) => `
                 <tr class="hover:bg-[#E7E4DC]/50 transition">
-                    <td class="py-3.5 px-4 font-mono font-semibold text-[#C2410C]">${s.shipment_number}</td>
-                    <td class="py-3.5 px-4 text-[#1C1917] font-medium">${s.carrier ? s.carrier.name : '-'}</td>
-                    <td class="py-3.5 px-4 text-[#57534E]">${s.origin ? s.origin.code : '?'} &rarr; ${s.destination ? s.destination.code : '?'}</td>
-                    <td class="py-3.5 px-4">${window.statusBadge(s.current_status)}</td>
-                    <td class="py-3.5 px-4">
+                    <td class="py-3.5 px-4 font-mono font-semibold text-[#C2410C] whitespace-nowrap">${s.shipment_number}</td>
+                    <td class="py-3.5 px-4 text-[#1C1917] font-medium whitespace-nowrap">${s.carrier ? s.carrier.name : '-'}</td>
+                    <td class="py-3.5 px-4 text-[#57534E] whitespace-nowrap">${s.origin ? s.origin.code : '?'} &rarr; ${s.destination ? s.destination.code : '?'}</td>
+                    <td class="py-3.5 px-4 whitespace-nowrap">${window.statusBadge(s.current_status)}</td>
+                    <td class="py-3.5 px-4 whitespace-nowrap">
                         ${s.is_delayed
-                            ? `<span class="text-[#C2410C] font-semibold">Terlambat ${s.delay_hours}j</span> ${window.severityBadge(s.delay_severity)}`
-                            : '<span class="text-[#166534] font-semibold">Tepat Waktu</span>'}
+                            ? `<span class="text-[#C2410C] font-semibold">Terlambat ${s.delay_hours}j</span>`
+                            : '<span class="text-[#166534] font-medium">Tepat Waktu</span>'}
                     </td>
-                    <td class="py-3.5 px-4 text-right">
+                    <td class="py-3.5 px-4 whitespace-nowrap">
+                        ${s.is_delayed
+                            ? window.severityBadge(s.delay_severity)
+                            : '<span class="inline-flex items-center whitespace-nowrap px-2 py-0.5 rounded-md text-[10px] font-bold uppercase border bg-[#DCFCE7] text-[#166534] border-[#BBF7D0]">NORMAL</span>'}
+                    </td>
+                    <td class="py-3.5 px-4 text-right whitespace-nowrap">
                         <button onclick="window.openShipmentDetail(${s.id})" class="px-3 py-1.5 rounded-lg bg-[#F9F8F6] border border-[#E2DFD7] hover:bg-[#C2410C] hover:text-white hover:border-[#C2410C] text-[#1C1917] text-xs font-semibold transition">
                             Detail &amp; Lacak →
                         </button>

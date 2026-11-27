@@ -68,12 +68,13 @@
                         <th class="py-3 px-4">Armada Carrier</th>
                         <th class="py-3 px-4">Rute Pelayaran</th>
                         <th class="py-3 px-4">Status Terkini</th>
-                        <th class="py-3 px-4">Kondisi &amp; Keterlambatan</th>
+                        <th class="py-3 px-4">Keterlambatan</th>
+                        <th class="py-3 px-4">Kondisi</th>
                         <th class="py-3 px-4 text-right">Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="shipments-tbody" class="divide-y divide-[#E2DFD7]">
-                    <tr><td colspan="6" class="py-8 text-center text-[#78716C]">Memuat data kargo...</td></tr>
+                    <tr><td colspan="7" class="py-8 text-center text-[#78716C]">Memuat data kargo...</td></tr>
                 </tbody>
             </table>
         </div>
