@@ -14,8 +14,7 @@
 
         <!-- Panel Dropdown Notifikasi -->
         <div id="notifications-panel" class="hidden mx-3 mt-2 p-3 rounded-lg bg-[#F9F8F6] border border-[#E2DFD7] space-y-2 max-h-64 overflow-y-auto custom-scrollbar">
-            <div class="flex items-center justify-between border-b border-[#E2DFD7] pb-2">
-                <span class="text-xs font-semibold text-[#1C1917]">Notifikasi</span>
+            <div class="flex items-center justify-end border-b border-[#E2DFD7] pb-2">
                 <button onclick="window.markAllNotificationsRead()" class="text-[11px] text-[#C2410C] hover:underline font-medium">Tandai semua dibaca</button>
             </div>
             <div id="notifications-list" class="space-y-2 text-xs text-[#57534E]">
