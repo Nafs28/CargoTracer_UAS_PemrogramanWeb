@@ -2,7 +2,7 @@
     <div class="flex items-end justify-between pb-6 border-b border-[#E2DFD7]">
         <div>
             <p class="text-xs font-semibold uppercase tracking-widest text-[#C2410C]">Kontrol Akses</p>
-            <h2 class="font-serif-editorial text-3xl sm:text-4xl font-semibold text-[#1C1917] mt-1">Kelola Pengguna (RBAC)</h2>
+            <h2 class="font-serif-editorial text-3xl sm:text-4xl font-semibold text-[#1C1917] mt-1">Kelola Pengguna</h2>
             <p class="text-sm text-[#57534E] mt-1">Manajemen akun Administrator, Operator Logistik, dan Pelanggan.</p>
         </div>
         <button onclick="window.openNewUserModal()" class="px-4 py-2 rounded-lg bg-[#C2410C] hover:bg-[#9A3412] text-xs font-semibold text-white transition">
