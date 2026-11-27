@@ -60,10 +60,7 @@ window.loadDashboardData = async function () {
             const coordsText = (lat !== null && lat !== undefined && lng !== null && lng !== undefined)
                 ? `${parseFloat(lat).toFixed(4)}, ${parseFloat(lng).toFixed(4)}`
                 : 'Koordinat tidak tersedia';
-            const routeFallback = (evt.shipment?.origin?.code && evt.shipment?.destination?.code)
-                ? `Koridor Maritim (${evt.shipment.origin.code} → ${evt.shipment.destination.code})`
-                : 'Titik Transit Maritim';
-            const locName = evt.location ? evt.location.name : routeFallback;
+            const locName = evt.location ? evt.location.name : 'Koridor Maritim';
 
             return `
             <tr class="hover:bg-[#E7E4DC]/50 transition">
