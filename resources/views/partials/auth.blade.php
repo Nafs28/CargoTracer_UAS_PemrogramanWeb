@@ -41,6 +41,10 @@
                 <label class="block text-xs font-semibold text-[#57534E] mb-1.5">Kata Sandi (Min. 8 karakter)</label>
                 <input type="password" id="reg-password" required minlength="8" class="w-full bg-[#F9F8F6] border border-[#E2DFD7] rounded-lg px-3.5 py-2.5 text-sm text-[#1C1917] placeholder-[#78716C] focus:outline-none focus:border-[#C2410C]" placeholder="••••••••">
             </div>
+            <div>
+                <label class="block text-xs font-semibold text-[#57534E] mb-1.5">Konfirmasi Kata Sandi</label>
+                <input type="password" id="reg-password-confirmation" required minlength="8" class="w-full bg-[#F9F8F6] border border-[#E2DFD7] rounded-lg px-3.5 py-2.5 text-sm text-[#1C1917] placeholder-[#78716C] focus:outline-none focus:border-[#C2410C]" placeholder="••••••••">
+            </div>
             <button type="submit" id="reg-btn" class="w-full py-3 rounded-lg bg-[#C2410C] hover:bg-[#9A3412] text-white text-sm font-semibold transition">
                 Daftar &amp; Masuk →
             </button>

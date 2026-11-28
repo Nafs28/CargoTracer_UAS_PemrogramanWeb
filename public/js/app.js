@@ -43,13 +43,20 @@ window.handleLogin = async function (e) {
 
 window.handleRegister = async function (e) {
     e.preventDefault();
+    const password = document.getElementById('reg-password').value;
+    const passwordConfirmation = document.getElementById('reg-password-confirmation').value;
+    if (password !== passwordConfirmation) {
+        window.toast('Konfirmasi kata sandi tidak cocok.', 'error');
+        return;
+    }
     try {
         const res = await window.api('/api/register', {
             method: 'POST',
             body: JSON.stringify({
                 name: document.getElementById('reg-name').value,
                 email: document.getElementById('reg-email').value,
-                password: document.getElementById('reg-password').value,
+                password,
+                password_confirmation: passwordConfirmation,
             }),
         });
         window.appState.token = res.data.token;
